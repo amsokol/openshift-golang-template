@@ -1,0 +1,26 @@
+#!/bin/bash
+#
+# S2I assemble script for the 'golang-openshift' image.
+# The 'assemble' script builds your application source ready to run.
+#
+# For more information refer to the documentation:
+#	https://github.com/openshift/source-to-image/blob/master/docs/builder_image.md
+#
+
+if [ "$1" = "-h" ]; then
+	# If the 'golang-openshift' assemble script is executed with '-h' flag,
+	# print the usage.
+	exec $STI_SCRIPTS_PATH/usage
+fi
+
+# Restore artifacts from the previous build (if they exist).
+#
+if [ "$(ls /tmp/artifacts/ 2>/dev/null)" ]; then
+  echo "---> Restoring build artifacts"
+  mv /tmp/artifacts/. ./
+fi
+
+echo "---> Installing application source"
+cp -Rf /tmp/src/. ./
+
+go build -o goapp -i
