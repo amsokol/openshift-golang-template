@@ -21,8 +21,9 @@
          "value": "golang-app"
       },
       {
-         "description": "Custom hostname for service routes.  Leave blank for default hostname, e.g.: <application-name>.<project>.<default-domain-suffix>",
-         "name": "APPLICATION_HOSTNAME"
+         "description": "Custom hostname for service routes",
+         "name": "APPLICATION_HOSTNAME",
+         "required": true
       },
       {
          "description": "Git source URI for application",
