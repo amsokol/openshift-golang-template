@@ -7,5 +7,5 @@
 #	https://github.com/openshift/source-to-image/blob/master/docs/builder_image.md
 #
 
-cd $GOPATH/src/
-exec ./goapp
+cd $GOPATH/src/$ROOT_PACKAGE
+exec ./goapplication4run

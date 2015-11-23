@@ -21,6 +21,8 @@ if [ "$(ls /tmp/artifacts/ 2>/dev/null)" ]; then
 fi
 
 echo "---> Installing application source"
+mkdir -p $ROOT_PACKAGE
+cd ./$ROOT_PACKAGE
 cp -Rf /tmp/src/. ./
 
-go build -o goapp -i
+go build -o goapplication4run
