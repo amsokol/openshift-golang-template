@@ -1,12 +1,12 @@
 package middleware
 
 import (
-	"log"
 	"net"
 	"time"
 
 	"github.com/labstack/echo"
 	"github.com/labstack/gommon/color"
+	"github.com/labstack/gommon/log"
 )
 
 func Logger() echo.MiddlewareFunc {
@@ -20,8 +20,9 @@ func Logger() echo.MiddlewareFunc {
 				remoteAddr = ip
 			} else if ip = req.Header.Get(echo.XForwardedFor); ip != "" {
 				remoteAddr = ip
+			} else {
+				remoteAddr, _, _ = net.SplitHostPort(remoteAddr)
 			}
-			remoteAddr, _, _ = net.SplitHostPort(remoteAddr)
 
 			start := time.Now()
 			if err := h(c); err != nil {
@@ -46,7 +47,7 @@ func Logger() echo.MiddlewareFunc {
 				code = color.Cyan(n)
 			}
 
-			log.Printf("%s %s %s %s %s %d", remoteAddr, method, path, code, stop.Sub(start), size)
+			log.Info("%s %s %s %s %s %d", remoteAddr, method, path, code, stop.Sub(start), size)
 			return nil
 		}
 	}

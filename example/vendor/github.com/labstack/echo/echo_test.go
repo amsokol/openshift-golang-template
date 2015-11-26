@@ -383,14 +383,14 @@ func TestEchoNotFound(t *testing.T) {
 }
 
 func TestEchoMethodNotAllowed(t *testing.T) {
-	//	e := New()
-	//	e.Get("/", func(c *Context) error {
-	//		return c.String(http.StatusOK, "Echo!")
-	//	})
-	//	r, _ := http.NewRequest(POST, "/", nil)
-	//	w := httptest.NewRecorder()
-	//	e.ServeHTTP(w, r)
-	//	assert.Equal(t, http.StatusMethodNotAllowed, w.Code)
+	e := New()
+	e.Get("/", func(c *Context) error {
+		return c.String(http.StatusOK, "Echo!")
+	})
+	r, _ := http.NewRequest(POST, "/", nil)
+	w := httptest.NewRecorder()
+	e.ServeHTTP(w, r)
+	assert.Equal(t, http.StatusMethodNotAllowed, w.Code)
 }
 
 func TestEchoHTTPError(t *testing.T) {
@@ -406,13 +406,22 @@ func TestEchoServer(t *testing.T) {
 	assert.IsType(t, &http.Server{}, s)
 }
 
-func TestStripTrailingSlash(t *testing.T) {
+func TestEchoHook(t *testing.T) {
 	e := New()
-	e.StripTrailingSlash()
-	r, _ := http.NewRequest(GET, "/users/", nil)
+	e.Get("/test", func(c *Context) error {
+		return c.NoContent(http.StatusNoContent)
+	})
+	e.Hook(func(w http.ResponseWriter, r *http.Request) {
+		path := r.URL.Path
+		l := len(path) - 1
+		if path != "/" && path[l] == '/' {
+			r.URL.Path = path[:l]
+		}
+	})
+	r, _ := http.NewRequest(GET, "/test/", nil)
 	w := httptest.NewRecorder()
 	e.ServeHTTP(w, r)
-	assert.Equal(t, http.StatusNotFound, w.Code)
+	assert.Equal(t, r.URL.Path, "/test")
 }
 
 func testMethod(t *testing.T, method, path string, e *Echo) {

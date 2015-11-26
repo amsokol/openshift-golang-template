@@ -10,8 +10,11 @@ import (
 
 	"strings"
 
-	"encoding/xml"
+	"golang.org/x/net/context"
+
 	"net/url"
+
+	"encoding/xml"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -28,7 +31,11 @@ func (t *Template) Render(w io.Writer, name string, data interface{}) error {
 
 func TestContext(t *testing.T) {
 	userJSON := `{"id":"1","name":"Joe"}`
+	userJSONIndent := "{\n_?\"id\": \"1\",\n_?\"name\": \"Joe\"\n_}"
 	userXML := `<user><id>1</id><name>Joe</name></user>`
+	userXMLIndent := "_<user>\n_?<id>1</id>\n_?<name>Joe</name>\n_</user>"
+
+	var nonMarshallableChannel chan bool
 
 	req, _ := http.NewRequest(POST, "/", strings.NewReader(userJSON))
 	rec := httptest.NewRecorder()
@@ -97,6 +104,29 @@ func TestContext(t *testing.T) {
 		assert.Equal(t, userJSON, rec.Body.String())
 	}
 
+	// JSON (error)
+	rec = httptest.NewRecorder()
+	c = NewContext(req, NewResponse(rec), New())
+	val := make(chan bool)
+	err = c.JSON(http.StatusOK, val)
+	assert.Error(t, err)
+
+	// JSONIndent
+	rec = httptest.NewRecorder()
+	c = NewContext(req, NewResponse(rec), New())
+	err = c.JSONIndent(http.StatusOK, user{"1", "Joe"}, "_", "?")
+	if assert.NoError(t, err) {
+		assert.Equal(t, http.StatusOK, rec.Code)
+		assert.Equal(t, ApplicationJSONCharsetUTF8, rec.Header().Get(ContentType))
+		assert.Equal(t, userJSONIndent, rec.Body.String())
+	}
+
+	// JSONIndent (error)
+	rec = httptest.NewRecorder()
+	c = NewContext(req, NewResponse(rec), New())
+	err = c.JSONIndent(http.StatusOK, nonMarshallableChannel, "_", "?")
+	assert.Error(t, err)
+
 	// JSONP
 	rec = httptest.NewRecorder()
 	c = NewContext(req, NewResponse(rec), New())
@@ -115,8 +145,30 @@ func TestContext(t *testing.T) {
 	if assert.NoError(t, err) {
 		assert.Equal(t, http.StatusOK, rec.Code)
 		assert.Equal(t, ApplicationXMLCharsetUTF8, rec.Header().Get(ContentType))
-		assert.Equal(t, xml.Header, xml.Header, rec.Body.String())
+		assert.Equal(t, xml.Header+userXML, rec.Body.String())
 	}
+
+	// XML (error)
+	rec = httptest.NewRecorder()
+	c = NewContext(req, NewResponse(rec), New())
+	err = c.XML(http.StatusOK, nonMarshallableChannel)
+	assert.Error(t, err)
+
+	// XMLIndent
+	rec = httptest.NewRecorder()
+	c = NewContext(req, NewResponse(rec), New())
+	err = c.XMLIndent(http.StatusOK, user{"1", "Joe"}, "_", "?")
+	if assert.NoError(t, err) {
+		assert.Equal(t, http.StatusOK, rec.Code)
+		assert.Equal(t, ApplicationXMLCharsetUTF8, rec.Header().Get(ContentType))
+		assert.Equal(t, xml.Header+userXMLIndent, rec.Body.String())
+	}
+
+	// XMLIndent (error)
+	rec = httptest.NewRecorder()
+	c = NewContext(req, NewResponse(rec), New())
+	err = c.XMLIndent(http.StatusOK, nonMarshallableChannel, "_", "?")
+	assert.Error(t, err)
 
 	// String
 	rec = httptest.NewRecorder()
@@ -141,7 +193,7 @@ func TestContext(t *testing.T) {
 	// File
 	rec = httptest.NewRecorder()
 	c = NewContext(req, NewResponse(rec), New())
-	err = c.File("", "test/fixture/walle.png", false)
+	err = c.File("test/fixture/walle.png", "", false)
 	if assert.NoError(t, err) {
 		assert.Equal(t, http.StatusOK, rec.Code)
 		assert.Equal(t, 219885, rec.Body.Len())
@@ -150,7 +202,7 @@ func TestContext(t *testing.T) {
 	// File as attachment
 	rec = httptest.NewRecorder()
 	c = NewContext(req, NewResponse(rec), New())
-	err = c.File("WALLE.PNG", "test/fixture/walle.png", true)
+	err = c.File("test/fixture/walle.png", "WALLE.PNG", true)
 	if assert.NoError(t, err) {
 		assert.Equal(t, http.StatusOK, rec.Code)
 		assert.Equal(t, rec.Header().Get(ContentDisposition), "attachment; filename=WALLE.PNG")
@@ -178,6 +230,21 @@ func TestContext(t *testing.T) {
 	c.reset(req, NewResponse(httptest.NewRecorder()), New())
 }
 
+func TestContextPath(t *testing.T) {
+	e := New()
+	r := e.Router()
+
+	r.Add(GET, "/users/:id", nil, e)
+	c := NewContext(nil, nil, e)
+	r.Find(GET, "/users/1", c)
+	assert.Equal(t, c.Path(), "/users/:id")
+
+	r.Add(GET, "/users/:uid/files/:fid", nil, e)
+	c = NewContext(nil, nil, e)
+	r.Find(GET, "/users/1/files/1", c)
+	assert.Equal(t, c.Path(), "/users/:uid/files/:fid")
+}
+
 func TestContextQuery(t *testing.T) {
 	q := make(url.Values)
 	q.Set("name", "joe")
@@ -190,7 +257,6 @@ func TestContextQuery(t *testing.T) {
 	c := NewContext(req, nil, New())
 	assert.Equal(t, "joe", c.Query("name"))
 	assert.Equal(t, "joe@labstack.com", c.Query("email"))
-
 }
 
 func TestContextForm(t *testing.T) {
@@ -205,6 +271,12 @@ func TestContextForm(t *testing.T) {
 	c := NewContext(req, nil, New())
 	assert.Equal(t, "joe", c.Form("name"))
 	assert.Equal(t, "joe@labstack.com", c.Form("email"))
+}
+
+func TestContextNetContext(t *testing.T) {
+	c := new(Context)
+	c.Context = context.WithValue(nil, "key", "val")
+	assert.Equal(t, "val", c.Value("key"))
 }
 
 func testBind(t *testing.T, c *Context, ct string) {
