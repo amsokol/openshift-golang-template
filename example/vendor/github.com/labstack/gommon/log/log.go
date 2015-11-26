@@ -42,9 +42,9 @@ func New(prefix string) (l *Logger) {
 	l = &Logger{
 		level:  INFO,
 		prefix: prefix,
+		out:    colorable.NewColorableStdout(),
+		err:    colorable.NewColorableStderr(),
 	}
-	l.SetOutput(colorable.NewColorableStdout())
-	l.err = colorable.NewColorableStderr()
 	return
 }
 
@@ -59,23 +59,28 @@ func (l *Logger) SetLevel(v Level) {
 func (l *Logger) SetOutput(w io.Writer) {
 	l.out = w
 	l.err = w
-	color.Disable()
 
 	switch w := w.(type) {
 	case *os.File:
 		if isatty.IsTerminal(w.Fd()) {
 			color.Enable()
 		}
-		levels = []string{
-			color.Cyan("TRACE"),
-			color.Blue("DEBUG"),
-			color.Green("INFO"),
-			color.Magenta("NOTICE"),
-			color.Yellow("WARN"),
-			color.Red("ERROR"),
-			color.RedBg("FATAL"),
-		}
+	default:
+		color.Disable()
 	}
+
+	// NOTE: Reintialize levels to reflect color enable/disable call.
+	initLevels()
+}
+
+func (l *Logger) Print(msg interface{}, args ...interface{}) {
+	f := fmt.Sprintf("%s", msg)
+	fmt.Fprintf(l.out, f, args...)
+}
+
+func (l *Logger) Println(msg interface{}, args ...interface{}) {
+	f := fmt.Sprintf("%s\n", msg)
+	fmt.Fprintf(l.out, f, args...)
 }
 
 func (l *Logger) Trace(msg interface{}, args ...interface{}) {
@@ -118,6 +123,14 @@ func SetOutput(w io.Writer) {
 	global.SetOutput(w)
 }
 
+func Print(msg interface{}, args ...interface{}) {
+	global.Print(msg, args...)
+}
+
+func Println(msg interface{}, args ...interface{}) {
+	global.Println(msg, args...)
+}
+
 func Trace(msg interface{}, args ...interface{}) {
 	global.Trace(msg, args...)
 }
@@ -152,7 +165,23 @@ func (l *Logger) log(v Level, w io.Writer, msg interface{}, args ...interface{})
 
 	if v >= l.level {
 		// TODO: Improve performance
-		f := fmt.Sprintf("%s|%s|%s\n", levels[v], l.prefix, msg)
+		f := fmt.Sprintf("%s|%s|%v\n", levels[v], l.prefix, msg)
 		fmt.Fprintf(w, f, args...)
 	}
+}
+
+func initLevels() {
+	levels = []string{
+		color.Cyan("TRACE"),
+		color.Blue("DEBUG"),
+		color.Green("INFO"),
+		color.Magenta("NOTICE"),
+		color.Yellow("WARN"),
+		color.Red("ERROR"),
+		color.RedBg("FATAL"),
+	}
+}
+
+func init() {
+	initLevels()
 }
