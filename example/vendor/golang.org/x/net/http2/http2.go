@@ -20,11 +20,29 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"os"
 	"strconv"
+	"strings"
 	"sync"
 )
 
-var VerboseLogs = false
+var (
+	VerboseLogs    bool
+	logFrameWrites bool
+	logFrameReads  bool
+)
+
+func init() {
+	e := os.Getenv("GODEBUG")
+	if strings.Contains(e, "http2debug=1") {
+		VerboseLogs = true
+	}
+	if strings.Contains(e, "http2debug=2") {
+		VerboseLogs = true
+		logFrameWrites = true
+		logFrameReads = true
+	}
+}
 
 const (
 	// ClientPreface is the string that must be sent by new
@@ -267,3 +285,14 @@ func bodyAllowedForStatus(status int) bool {
 	}
 	return true
 }
+
+type httpError struct {
+	msg     string
+	timeout bool
+}
+
+func (e *httpError) Error() string   { return e.msg }
+func (e *httpError) Timeout() bool   { return e.timeout }
+func (e *httpError) Temporary() bool { return true }
+
+var errTimeout error = &httpError{msg: "http2: timeout awaiting response headers", timeout: true}

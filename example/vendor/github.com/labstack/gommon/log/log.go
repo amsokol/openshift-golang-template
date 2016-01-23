@@ -56,6 +56,10 @@ func (l *Logger) SetLevel(v Level) {
 	l.level = v
 }
 
+func (l *Logger) Level() Level {
+	return l.level
+}
+
 func (l *Logger) SetOutput(w io.Writer) {
 	l.out = w
 	l.err = w
@@ -109,6 +113,7 @@ func (l *Logger) Error(msg interface{}, args ...interface{}) {
 
 func (l *Logger) Fatal(msg interface{}, args ...interface{}) {
 	l.log(FATAL, l.err, msg, args...)
+	os.Exit(1)
 }
 
 func SetPrefix(p string) {
