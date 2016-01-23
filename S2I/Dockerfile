@@ -14,6 +14,17 @@ LABEL io.k8s.description="Platform for building golang web application" \
       io.openshift.expose-services="8080:http" \
       io.openshift.tags="builder,1.0.0,golang"
 
+ENV GOLANG_VERSION 1.5.3
+ENV GOLANG_DOWNLOAD_URL https://golang.org/dl/go$GOLANG_VERSION.linux-amd64.tar.gz
+ENV GOLANG_DOWNLOAD_SHA256 43afe0c5017e502630b1aea4d44b8a7f059bf60d7f29dfd58db454d4e4e0ae53
+
+RUN curl -fsSL "$GOLANG_DOWNLOAD_URL" -o golang.tar.gz \
+    && echo "$GOLANG_DOWNLOAD_SHA256  golang.tar.gz" | sha256sum -c - \
+	&& tar -C /usr/local -xzf golang.tar.gz \
+	&& rm golang.tar.gz
+
+ENV PATH /usr/local/go/bin:$PATH
+
 # TODO: Install required packages here:
 # RUN yum install -y ... && yum clean all -y
 
