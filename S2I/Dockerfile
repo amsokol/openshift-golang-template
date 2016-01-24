@@ -1,5 +1,5 @@
 
-# amsokol/golang-openshift:1.5.1
+# amsokol/golang-openshift:1.5.3
 FROM openshift/base-centos7
 
 # TODO: Put the maintainer name in the image metadata

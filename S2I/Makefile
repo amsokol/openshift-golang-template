@@ -1,5 +1,5 @@
 
-IMAGE_NAME = amsokol/golang-openshift:1.5.1
+IMAGE_NAME = amsokol/golang-openshift:1.5.3
 
 build:
 	docker build -t $(IMAGE_NAME) .

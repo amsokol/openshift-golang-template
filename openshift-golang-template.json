@@ -103,7 +103,7 @@
             "sourceStrategy": {
                "from": {
                   "kind": "DockerImage",
-                  "name": "docker.io/amsokol/golang-openshift:1.5.1"
+                  "name": "docker.io/amsokol/golang-openshift:1.5.3"
                },
                "env": [
                   {
