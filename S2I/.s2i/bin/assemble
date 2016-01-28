@@ -1,6 +1,6 @@
 #!/bin/bash -e
 #
-# S2I assemble script for the 'amsokol/golang-openshift:1.5.1' image.
+# S2I assemble script for the 'amsokol/golang-openshift:1.5.3' image.
 # The 'assemble' script builds your application source ready to run.
 #
 # For more information refer to the documentation:
@@ -8,9 +8,9 @@
 #
 
 if [ "$1" = "-h" ]; then
-	# If the 'amsokol/golang-openshift:1.5.1' assemble script is executed with '-h' flag,
+	# If the 'amsokol/golang-openshift:1.5.3' assemble script is executed with '-h' flag,
 	# print the usage.
-	exec /usr/local/s2i/usage
+	exec usage
 fi
 
 # Restore artifacts from the previous build (if they exist).
@@ -21,11 +21,10 @@ if [ "$(ls /tmp/artifacts/ 2>/dev/null)" ]; then
 fi
 
 echo "---> Installing application source"
-mkdir -p $ROOT_PACKAGE
-cd ./$ROOT_PACKAGE
+mkdir -p $GOPATH/src/$ROOT_PACKAGE
+cd $GOPATH/src/$ROOT_PACKAGE
 cp -Rf /tmp/src/. ./
 
 echo "---> Building application from source"
 
-export GOPATH=/opt/app-root
 go build -o goapplication4run
