@@ -41,12 +41,6 @@
         "value": "example"
       },
       {
-        "name": "ROOT_PACKAGE",
-        "description": "Golang package",
-        "value": "github.com/amsokol/openshift-golang-template/example",
-        "required": true
-      },
-      {
         "name": "GO15VENDOREXPERIMENT",
         "description": "Enable golang 1.5 experimental vendoring",
         "value": "1"
@@ -106,9 +100,13 @@
                   "name": "docker.io/amsokol/golang-openshift:1.5.3"
                },
                "env": [
+                   {
+                      "name": "SOURCE_REPOSITORY_URL",
+                      "value": "${SOURCE_REPOSITORY_URL}"
+                   },
                   {
-                     "name": "ROOT_PACKAGE",
-                     "value": "${ROOT_PACKAGE}"
+                     "name": "CONTEXT_DIR",
+                     "value": "${CONTEXT_DIR}"
                   },
                   {
                     "name": "GO15VENDOREXPERIMENT",
