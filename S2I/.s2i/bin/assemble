@@ -1,6 +1,6 @@
 #!/bin/bash -e
 #
-# S2I assemble script for the 'amsokol/golang-openshift:1.5.3' image.
+# S2I assemble script for the 'amsokol/golang-openshift:1.6' image.
 # The 'assemble' script builds your application source ready to run.
 #
 # For more information refer to the documentation:
@@ -8,7 +8,7 @@
 #
 
 if [ "$1" = "-h" ]; then
-	# If the 'amsokol/golang-openshift:1.5.3' assemble script is executed with '-h' flag,
+	# If the 'amsokol/golang-openshift:1.6' assemble script is executed with '-h' flag,
 	# print the usage.
 	exec usage
 fi

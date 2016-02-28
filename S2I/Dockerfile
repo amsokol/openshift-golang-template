@@ -1,5 +1,5 @@
 
-# amsokol/golang-openshift:1.5.3
+# amsokol/golang-openshift:1.6
 FROM openshift/base-centos7
 
 # TODO: Put the maintainer name in the image metadata
@@ -14,9 +14,9 @@ LABEL io.k8s.description="Platform for building golang web application" \
       io.openshift.expose-services="8080:http" \
       io.openshift.tags="builder,1.0.0,golang"
 
-ENV GOLANG_VERSION 1.5.3
+ENV GOLANG_VERSION 1.6
 ENV GOLANG_DOWNLOAD_URL https://golang.org/dl/go$GOLANG_VERSION.linux-amd64.tar.gz
-ENV GOLANG_DOWNLOAD_SHA256 43afe0c5017e502630b1aea4d44b8a7f059bf60d7f29dfd58db454d4e4e0ae53
+ENV GOLANG_DOWNLOAD_SHA256 5470eac05d273c74ff8bac7bef5bad0b5abbd1c4052efbdbc8db45332e836b0b
 
 RUN curl -fsSL "$GOLANG_DOWNLOAD_URL" -o golang.tar.gz \
     && echo "$GOLANG_DOWNLOAD_SHA256  golang.tar.gz" | sha256sum -c - \

@@ -3,7 +3,7 @@ apiVersion: v1
 metadata:
   name: golang
   annotations:
-    description: Application template for Golang 1.5.3
+    description: Application template for Golang 1.6
     tags: 'golang'
     iconClass: icon-golang
 labels:
@@ -76,7 +76,7 @@ objects:
         sourceStrategy:
           from:
             kind: DockerImage
-            name: 'docker.io/amsokol/golang-openshift:1.5.3'
+            name: 'docker.io/amsokol/golang-openshift:1.6'
           env:
             - name: SOURCE_REPOSITORY_URL
               value: '${SOURCE_REPOSITORY_URL}'
