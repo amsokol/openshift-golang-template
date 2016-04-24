@@ -3,56 +3,54 @@ package middleware
 import (
 	"encoding/base64"
 	"net/http"
-	"net/http/httptest"
 	"testing"
 
 	"github.com/labstack/echo"
+	"github.com/labstack/echo/test"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestBasicAuth(t *testing.T) {
 	e := echo.New()
-	req, _ := http.NewRequest(echo.GET, "/", nil)
-	rec := httptest.NewRecorder()
-	c := echo.NewContext(req, echo.NewResponse(rec, e), e)
-	fn := func(u, p string) bool {
+	rq := test.NewRequest(echo.GET, "/", nil)
+	rs := test.NewResponseRecorder()
+	c := e.NewContext(rq, rs)
+	f := func(u, p string) bool {
 		if u == "joe" && p == "secret" {
 			return true
 		}
 		return false
 	}
-	ba := BasicAuth(fn)
+	h := BasicAuth(f)(func(c echo.Context) error {
+		return c.String(http.StatusOK, "test")
+	})
 
 	// Valid credentials
-	auth := Basic + " " + base64.StdEncoding.EncodeToString([]byte("joe:secret"))
-	req.Header.Set(echo.Authorization, auth)
-	assert.NoError(t, ba(c))
+	auth := basic + " " + base64.StdEncoding.EncodeToString([]byte("joe:secret"))
+	rq.Header().Set(echo.HeaderAuthorization, auth)
+	assert.NoError(t, h(c))
 
 	//---------------------
 	// Invalid credentials
 	//---------------------
 
 	// Incorrect password
-	auth = Basic + " " + base64.StdEncoding.EncodeToString([]byte("joe:password"))
-	req.Header.Set(echo.Authorization, auth)
-	he := ba(c).(*echo.HTTPError)
-	assert.Equal(t, http.StatusUnauthorized, he.Code())
-	assert.Equal(t, Basic+" realm=Restricted", rec.Header().Get(echo.WWWAuthenticate))
+	auth = basic + " " + base64.StdEncoding.EncodeToString([]byte("joe:password"))
+	rq.Header().Set(echo.HeaderAuthorization, auth)
+	he := h(c).(*echo.HTTPError)
+	assert.Equal(t, http.StatusUnauthorized, he.Code)
+	assert.Equal(t, basic+" realm=Restricted", rs.Header().Get(echo.HeaderWWWAuthenticate))
 
 	// Empty Authorization header
-	req.Header.Set(echo.Authorization, "")
-	he = ba(c).(*echo.HTTPError)
-	assert.Equal(t, http.StatusUnauthorized, he.Code())
-	assert.Equal(t, Basic+" realm=Restricted", rec.Header().Get(echo.WWWAuthenticate))
+	rq.Header().Set(echo.HeaderAuthorization, "")
+	he = h(c).(*echo.HTTPError)
+	assert.Equal(t, http.StatusUnauthorized, he.Code)
+	assert.Equal(t, basic+" realm=Restricted", rs.Header().Get(echo.HeaderWWWAuthenticate))
 
 	// Invalid Authorization header
 	auth = base64.StdEncoding.EncodeToString([]byte("invalid"))
-	req.Header.Set(echo.Authorization, auth)
-	he = ba(c).(*echo.HTTPError)
-	assert.Equal(t, http.StatusUnauthorized, he.Code())
-	assert.Equal(t, Basic+" realm=Restricted", rec.Header().Get(echo.WWWAuthenticate))
-
-	// WebSocket
-	c.Request().Header.Set(echo.Upgrade, echo.WebSocket)
-	assert.NoError(t, ba(c))
+	rq.Header().Set(echo.HeaderAuthorization, auth)
+	he = h(c).(*echo.HTTPError)
+	assert.Equal(t, http.StatusUnauthorized, he.Code)
+	assert.Equal(t, basic+" realm=Restricted", rs.Header().Get(echo.HeaderWWWAuthenticate))
 }

@@ -1,0 +1,626 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="7b510b92-ba04-4064-8dd3-b2547aa35cc9" name="Default" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vendor/github.com/klauspost/compress" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vendor/github.com/klauspost/cpuid" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vendor/github.com/klauspost/crc32" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vendor/github.com/valyala/fasthttp" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vendor/github.com/valyala/fasttemplate" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/recipes/crud/server.go" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/recipes/embed-resources/.gitignore" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/recipes/embed-resources/app/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/recipes/embed-resources/app/main.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/recipes/embed-resources/rice.go" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/recipes/file-upload/public/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/recipes/file-upload/server.go" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/recipes/google-app-engine/Dockerfile" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/recipes/google-app-engine/app-engine.go" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/recipes/google-app-engine/app-engine.yaml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/recipes/google-app-engine/app-managed.go" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/recipes/google-app-engine/app-managed.yaml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/recipes/google-app-engine/app-standalone.go" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/recipes/google-app-engine/app.go" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/recipes/google-app-engine/public/favicon.ico" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/recipes/google-app-engine/public/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/recipes/google-app-engine/public/scripts/main.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/recipes/google-app-engine/templates/welcome.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/recipes/google-app-engine/users.go" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/recipes/google-app-engine/welcome.go" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/recipes/graceful-shutdown/grace/server.go" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/recipes/graceful-shutdown/graceful/server.go" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/recipes/hello-world/server.go" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/recipes/jsonp/public/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/recipes/jsonp/server.go" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/recipes/jwt-authentication/server.go" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/recipes/jwt-authentication/token/token.go" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/recipes/middleware/server.go" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/recipes/streaming-file-upload/public/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/recipes/streaming-file-upload/server.go" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/recipes/streaming-response/server.go" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/recipes/subdomains/server.go" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/recipes/website/public/favicon.ico" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/recipes/website/public/folder/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/recipes/website/public/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/recipes/website/public/scripts/main.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/recipes/website/public/views/welcome.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/recipes/website/server.go" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/recipes/websocket/public/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/recipes/websocket/server.go" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/response.go" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/response_test.go" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/test/fixture/walle.png" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/website/Dockerfile" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/website/config.json" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/website/content/guide/customization.md" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/website/content/guide/error-handling.md" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/website/content/guide/installation.md" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/website/content/guide/middleware.md" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/website/content/guide/request.md" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/website/content/guide/response.md" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/website/content/guide/routing.md" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/website/content/index.md" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/website/content/recipes/crud.md" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/website/content/recipes/embed-resources.md" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/website/content/recipes/file-upload.md" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/website/content/recipes/google-app-engine.md" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/website/content/recipes/graceful-shutdown.md" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/website/content/recipes/hello-world.md" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/website/content/recipes/jsonp.md" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/website/content/recipes/jwt-authentication.md" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/website/content/recipes/middleware.md" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/website/content/recipes/streaming-file-upload.md" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/website/content/recipes/streaming-response.md" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/website/content/recipes/subdomains.md" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/website/content/recipes/website.md" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/website/content/recipes/websocket.md" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/website/layouts/_default/single.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/website/layouts/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/website/layouts/partials/connect.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/website/layouts/partials/footer.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/website/layouts/partials/head.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/website/layouts/partials/header.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/website/layouts/partials/menu.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/website/layouts/partials/share.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/website/layouts/shortcodes/embed.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/website/package.json" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/website/server.go" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/website/static/scripts/echo.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/website/static/scripts/prism.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/website/static/styles/echo.css" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/website/static/styles/prism.css" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/gommon/gytes/README.md" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/gommon/gytes/gytes.go" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/gommon/gytes/gytes_test.go" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/golang.org/x/net/context/ctxhttp/cancelreq.go" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/golang.org/x/net/context/ctxhttp/cancelreq_go14.go" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/golang.org/x/net/http2/go15.go" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/golang.org/x/net/http2/not_go15.go" afterPath="" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../S2I/.s2i/bin/assemble" afterPath="$PROJECT_DIR$/../S2I/.s2i/bin/assemble" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../S2I/.s2i/bin/run" afterPath="$PROJECT_DIR$/../S2I/.s2i/bin/run" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../S2I/.s2i/bin/save-artifacts" afterPath="$PROJECT_DIR$/../S2I/.s2i/bin/save-artifacts" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../S2I/.s2i/bin/usage" afterPath="$PROJECT_DIR$/../S2I/.s2i/bin/usage" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../S2I/Dockerfile" afterPath="$PROJECT_DIR$/../S2I/Dockerfile" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../S2I/Makefile" afterPath="$PROJECT_DIR$/../S2I/Makefile" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main.go" afterPath="$PROJECT_DIR$/main.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/.gitignore" afterPath="$PROJECT_DIR$/vendor/github.com/labstack/echo/.gitignore" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/.travis.yml" afterPath="$PROJECT_DIR$/vendor/github.com/labstack/echo/.travis.yml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/README.md" afterPath="$PROJECT_DIR$/vendor/github.com/labstack/echo/README.md" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/context.go" afterPath="$PROJECT_DIR$/vendor/github.com/labstack/echo/context.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/context_test.go" afterPath="$PROJECT_DIR$/vendor/github.com/labstack/echo/context_test.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/echo.go" afterPath="$PROJECT_DIR$/vendor/github.com/labstack/echo/echo.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/echo_test.go" afterPath="$PROJECT_DIR$/vendor/github.com/labstack/echo/echo_test.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/group.go" afterPath="$PROJECT_DIR$/vendor/github.com/labstack/echo/group.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/group_test.go" afterPath="$PROJECT_DIR$/vendor/github.com/labstack/echo/group_test.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/middleware/auth.go" afterPath="$PROJECT_DIR$/vendor/github.com/labstack/echo/middleware/auth.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/middleware/auth_test.go" afterPath="$PROJECT_DIR$/vendor/github.com/labstack/echo/middleware/auth_test.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/middleware/compress.go" afterPath="$PROJECT_DIR$/vendor/github.com/labstack/echo/middleware/compress.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/middleware/compress_test.go" afterPath="$PROJECT_DIR$/vendor/github.com/labstack/echo/middleware/compress_test.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/middleware/logger.go" afterPath="$PROJECT_DIR$/vendor/github.com/labstack/echo/middleware/logger.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/middleware/logger_test.go" afterPath="$PROJECT_DIR$/vendor/github.com/labstack/echo/middleware/logger_test.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/middleware/recover.go" afterPath="$PROJECT_DIR$/vendor/github.com/labstack/echo/middleware/recover.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/middleware/recover_test.go" afterPath="$PROJECT_DIR$/vendor/github.com/labstack/echo/middleware/recover_test.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/router.go" afterPath="$PROJECT_DIR$/vendor/github.com/labstack/echo/router.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/echo/router_test.go" afterPath="$PROJECT_DIR$/vendor/github.com/labstack/echo/router_test.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/gommon/.travis.yml" afterPath="$PROJECT_DIR$/vendor/github.com/labstack/gommon/.travis.yml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/gommon/README.md" afterPath="$PROJECT_DIR$/vendor/github.com/labstack/gommon/README.md" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/gommon/color/color.go" afterPath="$PROJECT_DIR$/vendor/github.com/labstack/gommon/color/color.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/gommon/color/color_test.go" afterPath="$PROJECT_DIR$/vendor/github.com/labstack/gommon/color/color_test.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/gommon/log/log.go" afterPath="$PROJECT_DIR$/vendor/github.com/labstack/gommon/log/log.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/github.com/labstack/gommon/log/log_test.go" afterPath="$PROJECT_DIR$/vendor/github.com/labstack/gommon/log/log_test.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/github.com/mattn/go-colorable/colorable_others.go" afterPath="$PROJECT_DIR$/vendor/github.com/mattn/go-colorable/colorable_others.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/github.com/mattn/go-colorable/colorable_windows.go" afterPath="$PROJECT_DIR$/vendor/github.com/mattn/go-colorable/colorable_windows.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/github.com/tylerb/graceful/graceful.go" afterPath="$PROJECT_DIR$/vendor/github.com/tylerb/graceful/graceful.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/github.com/tylerb/graceful/graceful_test.go" afterPath="$PROJECT_DIR$/vendor/github.com/tylerb/graceful/graceful_test.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/golang.org/x/net/context/context.go" afterPath="$PROJECT_DIR$/vendor/golang.org/x/net/context/context.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/golang.org/x/net/context/context_test.go" afterPath="$PROJECT_DIR$/vendor/golang.org/x/net/context/context_test.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/golang.org/x/net/context/ctxhttp/ctxhttp.go" afterPath="$PROJECT_DIR$/vendor/golang.org/x/net/context/ctxhttp/ctxhttp.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/golang.org/x/net/context/ctxhttp/ctxhttp_test.go" afterPath="$PROJECT_DIR$/vendor/golang.org/x/net/context/ctxhttp/ctxhttp_test.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/golang.org/x/net/http2/errors.go" afterPath="$PROJECT_DIR$/vendor/golang.org/x/net/http2/errors.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/golang.org/x/net/http2/frame.go" afterPath="$PROJECT_DIR$/vendor/golang.org/x/net/http2/frame.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/golang.org/x/net/http2/frame_test.go" afterPath="$PROJECT_DIR$/vendor/golang.org/x/net/http2/frame_test.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/golang.org/x/net/http2/h2demo/h2demo.go" afterPath="$PROJECT_DIR$/vendor/golang.org/x/net/http2/h2demo/h2demo.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/golang.org/x/net/http2/h2demo/launch.go" afterPath="$PROJECT_DIR$/vendor/golang.org/x/net/http2/h2demo/launch.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/golang.org/x/net/http2/h2i/h2i.go" afterPath="$PROJECT_DIR$/vendor/golang.org/x/net/http2/h2i/h2i.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/golang.org/x/net/http2/hpack/encode.go" afterPath="$PROJECT_DIR$/vendor/golang.org/x/net/http2/hpack/encode.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/golang.org/x/net/http2/hpack/hpack.go" afterPath="$PROJECT_DIR$/vendor/golang.org/x/net/http2/hpack/hpack.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/golang.org/x/net/http2/http2.go" afterPath="$PROJECT_DIR$/vendor/golang.org/x/net/http2/http2.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/golang.org/x/net/http2/http2_test.go" afterPath="$PROJECT_DIR$/vendor/golang.org/x/net/http2/http2_test.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/golang.org/x/net/http2/server.go" afterPath="$PROJECT_DIR$/vendor/golang.org/x/net/http2/server.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/golang.org/x/net/http2/server_test.go" afterPath="$PROJECT_DIR$/vendor/golang.org/x/net/http2/server_test.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/golang.org/x/net/http2/transport.go" afterPath="$PROJECT_DIR$/vendor/golang.org/x/net/http2/transport.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/golang.org/x/net/http2/transport_test.go" afterPath="$PROJECT_DIR$/vendor/golang.org/x/net/http2/transport_test.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/golang.org/x/net/http2/write.go" afterPath="$PROJECT_DIR$/vendor/golang.org/x/net/http2/write.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/golang.org/x/net/http2/z_spec_test.go" afterPath="$PROJECT_DIR$/vendor/golang.org/x/net/http2/z_spec_test.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/golang.org/x/net/icmp/echo.go" afterPath="$PROJECT_DIR$/vendor/golang.org/x/net/icmp/echo.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/golang.org/x/net/icmp/endpoint.go" afterPath="$PROJECT_DIR$/vendor/golang.org/x/net/icmp/endpoint.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/golang.org/x/net/icmp/extension.go" afterPath="$PROJECT_DIR$/vendor/golang.org/x/net/icmp/extension.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/golang.org/x/net/icmp/interface.go" afterPath="$PROJECT_DIR$/vendor/golang.org/x/net/icmp/interface.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/golang.org/x/net/icmp/ipv4.go" afterPath="$PROJECT_DIR$/vendor/golang.org/x/net/icmp/ipv4.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/golang.org/x/net/icmp/message.go" afterPath="$PROJECT_DIR$/vendor/golang.org/x/net/icmp/message.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/golang.org/x/net/icmp/mpls.go" afterPath="$PROJECT_DIR$/vendor/golang.org/x/net/icmp/mpls.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/golang.org/x/net/icmp/packettoobig.go" afterPath="$PROJECT_DIR$/vendor/golang.org/x/net/icmp/packettoobig.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/golang.org/x/net/icmp/paramprob.go" afterPath="$PROJECT_DIR$/vendor/golang.org/x/net/icmp/paramprob.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/golang.org/x/net/internal/iana/const.go" afterPath="$PROJECT_DIR$/vendor/golang.org/x/net/internal/iana/const.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/golang.org/x/net/ipv4/gen.go" afterPath="$PROJECT_DIR$/vendor/golang.org/x/net/ipv4/gen.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/golang.org/x/net/ipv4/header.go" afterPath="$PROJECT_DIR$/vendor/golang.org/x/net/ipv4/header.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/golang.org/x/net/ipv4/helper.go" afterPath="$PROJECT_DIR$/vendor/golang.org/x/net/ipv4/helper.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/golang.org/x/net/ipv4/sockopt_asmreq_unix.go" afterPath="$PROJECT_DIR$/vendor/golang.org/x/net/ipv4/sockopt_asmreq_unix.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/golang.org/x/net/ipv4/sockopt_asmreqn_unix.go" afterPath="$PROJECT_DIR$/vendor/golang.org/x/net/ipv4/sockopt_asmreqn_unix.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/golang.org/x/net/ipv4/sockopt_ssmreq_unix.go" afterPath="$PROJECT_DIR$/vendor/golang.org/x/net/ipv4/sockopt_ssmreq_unix.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/golang.org/x/net/ipv4/sockopt_unix.go" afterPath="$PROJECT_DIR$/vendor/golang.org/x/net/ipv4/sockopt_unix.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/golang.org/x/net/ipv4/sys_bsd.go" afterPath="$PROJECT_DIR$/vendor/golang.org/x/net/ipv4/sys_bsd.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/golang.org/x/net/ipv4/sys_darwin.go" afterPath="$PROJECT_DIR$/vendor/golang.org/x/net/ipv4/sys_darwin.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/golang.org/x/net/ipv4/sys_freebsd.go" afterPath="$PROJECT_DIR$/vendor/golang.org/x/net/ipv4/sys_freebsd.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/golang.org/x/net/ipv4/sys_linux.go" afterPath="$PROJECT_DIR$/vendor/golang.org/x/net/ipv4/sys_linux.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/golang.org/x/net/ipv4/sys_openbsd.go" afterPath="$PROJECT_DIR$/vendor/golang.org/x/net/ipv4/sys_openbsd.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/golang.org/x/net/ipv4/sys_stub.go" afterPath="$PROJECT_DIR$/vendor/golang.org/x/net/ipv4/sys_stub.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/golang.org/x/net/ipv4/syscall_linux_386.go" afterPath="$PROJECT_DIR$/vendor/golang.org/x/net/ipv4/syscall_linux_386.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/golang.org/x/net/ipv4/syscall_unix.go" afterPath="$PROJECT_DIR$/vendor/golang.org/x/net/ipv4/syscall_unix.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/golang.org/x/net/ipv6/control_rfc2292_unix.go" afterPath="$PROJECT_DIR$/vendor/golang.org/x/net/ipv6/control_rfc2292_unix.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/golang.org/x/net/ipv6/control_rfc3542_unix.go" afterPath="$PROJECT_DIR$/vendor/golang.org/x/net/ipv6/control_rfc3542_unix.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/golang.org/x/net/ipv6/gen.go" afterPath="$PROJECT_DIR$/vendor/golang.org/x/net/ipv6/gen.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/golang.org/x/net/ipv6/header.go" afterPath="$PROJECT_DIR$/vendor/golang.org/x/net/ipv6/header.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/golang.org/x/net/ipv6/helper.go" afterPath="$PROJECT_DIR$/vendor/golang.org/x/net/ipv6/helper.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/golang.org/x/net/ipv6/sockopt_ssmreq_unix.go" afterPath="$PROJECT_DIR$/vendor/golang.org/x/net/ipv6/sockopt_ssmreq_unix.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/golang.org/x/net/ipv6/sockopt_unix.go" afterPath="$PROJECT_DIR$/vendor/golang.org/x/net/ipv6/sockopt_unix.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/golang.org/x/net/ipv6/sys_bsd.go" afterPath="$PROJECT_DIR$/vendor/golang.org/x/net/ipv6/sys_bsd.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/golang.org/x/net/ipv6/sys_darwin.go" afterPath="$PROJECT_DIR$/vendor/golang.org/x/net/ipv6/sys_darwin.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/golang.org/x/net/ipv6/sys_freebsd.go" afterPath="$PROJECT_DIR$/vendor/golang.org/x/net/ipv6/sys_freebsd.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/golang.org/x/net/ipv6/sys_linux.go" afterPath="$PROJECT_DIR$/vendor/golang.org/x/net/ipv6/sys_linux.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/golang.org/x/net/ipv6/sys_stub.go" afterPath="$PROJECT_DIR$/vendor/golang.org/x/net/ipv6/sys_stub.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/golang.org/x/net/ipv6/syscall_linux_386.go" afterPath="$PROJECT_DIR$/vendor/golang.org/x/net/ipv6/syscall_linux_386.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/golang.org/x/net/ipv6/syscall_unix.go" afterPath="$PROJECT_DIR$/vendor/golang.org/x/net/ipv6/syscall_unix.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/golang.org/x/net/publicsuffix/gen.go" afterPath="$PROJECT_DIR$/vendor/golang.org/x/net/publicsuffix/gen.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/golang.org/x/net/publicsuffix/table.go" afterPath="$PROJECT_DIR$/vendor/golang.org/x/net/publicsuffix/table.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/golang.org/x/net/publicsuffix/table_test.go" afterPath="$PROJECT_DIR$/vendor/golang.org/x/net/publicsuffix/table_test.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/golang.org/x/net/trace/trace.go" afterPath="$PROJECT_DIR$/vendor/golang.org/x/net/trace/trace.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/golang.org/x/net/trace/trace_test.go" afterPath="$PROJECT_DIR$/vendor/golang.org/x/net/trace/trace_test.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/golang.org/x/net/webdav/file.go" afterPath="$PROJECT_DIR$/vendor/golang.org/x/net/webdav/file.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/golang.org/x/net/webdav/file_test.go" afterPath="$PROJECT_DIR$/vendor/golang.org/x/net/webdav/file_test.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/golang.org/x/net/webdav/prop.go" afterPath="$PROJECT_DIR$/vendor/golang.org/x/net/webdav/prop.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/golang.org/x/net/webdav/prop_test.go" afterPath="$PROJECT_DIR$/vendor/golang.org/x/net/webdav/prop_test.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/golang.org/x/net/webdav/webdav.go" afterPath="$PROJECT_DIR$/vendor/golang.org/x/net/webdav/webdav.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/golang.org/x/net/webdav/webdav_test.go" afterPath="$PROJECT_DIR$/vendor/golang.org/x/net/webdav/webdav_test.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/golang.org/x/net/webdav/xml.go" afterPath="$PROJECT_DIR$/vendor/golang.org/x/net/webdav/xml.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/golang.org/x/net/webdav/xml_test.go" afterPath="$PROJECT_DIR$/vendor/golang.org/x/net/webdav/xml_test.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/golang.org/x/net/websocket/websocket.go" afterPath="$PROJECT_DIR$/vendor/golang.org/x/net/websocket/websocket.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../openshift-golang-template.yaml" afterPath="$PROJECT_DIR$/../openshift-golang-template.yaml" />
+    </list>
+    <ignored path="openshift-golang-template-example.iws" />
+    <ignored path=".idea/workspace.xml" />
+    <ignored path="$PROJECT_DIR$/out/" />
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="TRACKING_ENABLED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ChangesViewManager" flattened_view="true" show_ignored="false" />
+  <component name="CompilerWorkspaceConfiguration">
+    <option name="CLEAR_OUTPUT_DIRECTORY" value="false" />
+  </component>
+  <component name="CreatePatchCommitExecutor">
+    <option name="PATCH_PATH" value="" />
+  </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
+  <component name="FavoritesManager">
+    <favorites_list name="openshift-golang-template-example" />
+  </component>
+  <component name="FileEditorManager">
+    <leaf>
+      <file leaf-file-name="main.go" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/main.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="918">
+              <caret line="27" column="0" selection-start-line="27" selection-start-column="0" selection-end-line="27" selection-end-column="0" />
+              <folding>
+                <element signature="e#14#193#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/main.go" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectFrameBounds">
+    <option name="x" value="-13" />
+    <option name="y" value="-13" />
+    <option name="width" value="3866" />
+    <option name="height" value="2186" />
+  </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <OptionsSetting value="true" id="Add" />
+    <OptionsSetting value="true" id="Remove" />
+    <OptionsSetting value="true" id="Checkout" />
+    <OptionsSetting value="true" id="Update" />
+    <OptionsSetting value="true" id="Status" />
+    <OptionsSetting value="true" id="Edit" />
+    <ConfirmationsSetting value="0" id="Add" />
+    <ConfirmationsSetting value="0" id="Remove" />
+  </component>
+  <component name="ProjectView">
+    <navigator currentView="ProjectPane" proportions="" version="1">
+      <flattenPackages />
+      <showMembers />
+      <showModules />
+      <showLibraryContents />
+      <hideEmptyPackages />
+      <abbreviatePackageNames />
+      <autoscrollToSource />
+      <autoscrollFromSource />
+      <sortByType />
+      <manualOrder />
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="Scratches" />
+      <pane id="PackagesPane" />
+      <pane id="Scope" />
+      <pane id="ProjectPane">
+        <subPane>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="openshift-golang-template-example" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="openshift-golang-template-example" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="example" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="openshift-golang-template-example" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="example" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="vendor" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+      </pane>
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="settings.editor.selected.configurable" value="org.jetbrains.plugins.hocon.settings.HoconProjectSettingsConfigurable" />
+    <property name="settings.editor.splitter.proportion" value="0.2" />
+    <property name="go.libraries.notification.had.been.shown" value="true" />
+    <property name="project.structure.last.edited" value="Libraries" />
+    <property name="project.structure.proportion" value="0.0" />
+    <property name="project.structure.side.proportion" value="0.2" />
+    <property name="configurable.Global.libraries.is.expanded" value="true" />
+    <property name="configurable.Project.libraries.is.expanded" value="true" />
+    <property name="configurable.Module.libraries.is.expanded" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/main.go" />
+  </component>
+  <component name="RunManager" selected="Go Application.Run">
+    <configuration default="true" type="Applet" factoryName="Applet">
+      <option name="HTML_USED" value="false" />
+      <option name="WIDTH" value="400" />
+      <option name="HEIGHT" value="300" />
+      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
+      <module />
+      <method />
+    </configuration>
+    <configuration default="true" type="Application" factoryName="Application">
+      <option name="MAIN_CLASS_NAME" />
+      <option name="VM_PARAMETERS" />
+      <option name="PROGRAM_PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="ENABLE_SWING_INSPECTOR" value="false" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <module name="" />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="true" type="GoApplicationRunConfiguration" factoryName="Go Application">
+      <module name="openshift-golang-template-example" />
+      <working_directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$" />
+      <kind value="FILE" />
+      <method />
+    </configuration>
+    <configuration default="true" type="GoRunFileConfiguration" factoryName="Go Single File">
+      <module name="openshift-golang-template-example" />
+      <working_directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$" />
+      <method />
+    </configuration>
+    <configuration default="true" type="GoTestRunConfiguration" factoryName="Go Test">
+      <module name="openshift-golang-template-example" />
+      <working_directory value="$PROJECT_DIR$" />
+      <framework value="gotest" />
+      <kind value="DIRECTORY" />
+      <method />
+    </configuration>
+    <configuration default="true" type="JarApplication" factoryName="JAR Application">
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="true" type="Java Scratch" factoryName="Java Scratch">
+      <option name="SCRATCH_FILE_ID" value="0" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="VM_PARAMETERS" />
+      <option name="PROGRAM_PARAMETERS" />
+      <option name="WORKING_DIRECTORY" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="ENABLE_SWING_INSPECTOR" value="false" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <module name="" />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="true" type="Remote" factoryName="Remote">
+      <option name="USE_SOCKET_TRANSPORT" value="true" />
+      <option name="SERVER_MODE" value="false" />
+      <option name="SHMEM_ADDRESS" value="javadebug" />
+      <option name="HOST" value="localhost" />
+      <option name="PORT" value="5005" />
+      <method />
+    </configuration>
+    <configuration default="true" type="ScalaTestRunConfiguration" factoryName="ScalaTest">
+      <module name="" />
+      <setting name="path" value="" />
+      <setting name="package" value="" />
+      <setting name="vmparams" value="" />
+      <setting name="params" value="" />
+      <setting name="workingDirectory" value="" />
+      <setting name="searchForTest" value="Across module dependencies" />
+      <setting name="testName" value="" />
+      <setting name="testKind" value="Class" />
+      <setting name="showProgressMessages" value="true" />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="true" type="Specs2RunConfiguration" factoryName="Specs2">
+      <module name="" />
+      <setting name="path" value="" />
+      <setting name="package" value="" />
+      <setting name="vmparams" value="" />
+      <setting name="params" value="" />
+      <setting name="workingDirectory" value="" />
+      <setting name="searchForTest" value="Across module dependencies" />
+      <setting name="testName" value="" />
+      <setting name="testKind" value="Class" />
+      <setting name="showProgressMessages" value="true" />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="true" type="uTestRunConfiguration" factoryName="utest">
+      <module name="" />
+      <setting name="path" value="" />
+      <setting name="package" value="" />
+      <setting name="vmparams" value="" />
+      <setting name="params" value="" />
+      <setting name="workingDirectory" value="" />
+      <setting name="searchForTest" value="Across module dependencies" />
+      <setting name="testName" value="" />
+      <setting name="testKind" value="Class" />
+      <setting name="showProgressMessages" value="true" />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="false" name="Run" type="GoApplicationRunConfiguration" factoryName="Go Application">
+      <module name="openshift-golang-template-example" />
+      <working_directory value="$PROJECT_DIR$" />
+      <filePath value="C:\Users\amsokol\Development\src\github.com\amsokol\openshift-golang-template\example\main.go" />
+      <kind value="FILE" />
+      <method>
+        <option name="GoBeforeRunTask" enabled="true" command="fmt" />
+      </method>
+    </configuration>
+    <list size="1">
+      <item index="0" class="java.lang.String" itemvalue="Go Application.Run" />
+    </list>
+    <configuration name="&lt;template&gt;" type="JUnit" default="true" selected="false">
+      <option name="MAIN_CLASS_NAME" />
+      <option name="VM_PARAMETERS" value="-ea" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$MODULE_DIR$" />
+    </configuration>
+    <configuration name="&lt;template&gt;" type="TestNG" default="true" selected="false">
+      <option name="MAIN_CLASS_NAME" />
+      <option name="VM_PARAMETERS" value="-ea" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$MODULE_DIR$" />
+    </configuration>
+    <configuration name="&lt;template&gt;" type="#org.jetbrains.idea.devkit.run.PluginConfigurationType" default="true" selected="false">
+      <option name="VM_PARAMETERS" value="-Xmx512m -Xms256m -XX:MaxPermSize=250m -ea" />
+    </configuration>
+  </component>
+  <component name="SbtLocalSettings">
+    <option name="externalProjectsViewState">
+      <projects_view />
+    </option>
+  </component>
+  <component name="ShelveChangesManager" show_recycled="false">
+    <option name="remove_strategy" value="false" />
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="-13" y="-13" width="3866" height="2186" extended-state="6" />
+    <editor active="true" />
+    <layout>
+      <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3296315" sideWeight="0.5" order="-1" side_tool="true" content_ui="tabs" />
+      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3296315" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="true" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3997981" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+    </layout>
+  </component>
+  <component name="VcsContentAnnotationSettings">
+    <option name="myLimit" value="2678400000" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager />
+    <watches-manager />
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/vendor/github.com/labstack/echo/context.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="428">
+          <caret line="18" column="40" selection-start-line="18" selection-start-column="16" selection-end-line="18" selection-end-column="40" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/openshift-golang-template-example.iml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vendor/github.com/tylerb/graceful/.travis.yml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vendor/github.com/tylerb/graceful/graceful.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-10710">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="918">
+          <caret line="27" column="0" selection-start-line="27" selection-start-column="0" selection-end-line="27" selection-end-column="0" />
+          <folding>
+            <element signature="e#14#193#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+  </component>
+  <component name="masterDetails">
+    <states>
+      <state key="ArtifactsStructureConfigurable.UI">
+        <settings>
+          <artifact-editor />
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="GlobalLibrariesConfigurable.UI">
+        <settings>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="JdkListConfigurable.UI">
+        <settings>
+          <last-edited>Go 1.6</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="ModuleStructureConfigurable.UI">
+        <settings>
+          <last-edited>openshift-golang-template-example</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+                <option value="0.6" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="ProjectLibrariesConfigurable.UI">
+        <settings>
+          <last-edited>GOPATH &lt;openshift-golang-template-example&gt;</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+    </states>
+  </component>
+</project>

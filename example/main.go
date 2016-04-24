@@ -6,12 +6,13 @@ import (
 	"time"
 
 	"github.com/labstack/echo"
-	mw "github.com/labstack/echo/middleware"
+	"github.com/labstack/echo/engine/standard"
+	"github.com/labstack/echo/middleware"
 	"github.com/tylerb/graceful"
 )
 
-func hello(c *echo.Context) error {
-	return c.String(http.StatusOK, "Hello, World!!!\n")
+func hello(c echo.Context) error {
+	return c.String(http.StatusOK, "Hello, World!\n")
 }
 
 func main() {
@@ -19,22 +20,17 @@ func main() {
 	e := echo.New()
 
 	// Middleware
-	e.Use(mw.Logger())
-	e.Use(mw.Recover())
+	e.Use(middleware.Logger())
+	e.Use(middleware.Recover())
 
 	// Routes
 	e.Get("/", hello)
 
-	// Setup server
-	port := "8080"
-	s := e.Server(":" + port)
-
-	// HTTP2 is currently enabled by default in echo.New(). To override TLS handshake errors
-	// you will need to override the TLSConfig for the server so it does not attempt to validate
-	// the connection using TLS as required by HTTP2
-	s.TLSConfig = nil
-
 	// Start server
+	port := "8080"
+	std := standard.New(":" + port)
+	std.SetHandler(e)
+
 	log.Printf("Starting app on port %+v\n", port)
-	graceful.ListenAndServe(s, 5*time.Second)
+	graceful.ListenAndServe(std.Server, 5*time.Second)
 }

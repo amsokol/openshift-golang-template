@@ -4,29 +4,35 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"path"
+	"runtime"
 	"sync"
+	"time"
 
-	"github.com/labstack/gommon/color"
+	"strconv"
+
 	"github.com/mattn/go-colorable"
 	"github.com/mattn/go-isatty"
+	"github.com/valyala/fasttemplate"
+
+	"github.com/labstack/gommon/color"
 )
 
 type (
 	Logger struct {
-		level  Level
-		out    io.Writer
-		err    io.Writer
-		prefix string
-		mu     sync.Mutex
+		prefix   string
+		level    uint8
+		output   io.Writer
+		template *fasttemplate.Template
+		levels   []string
+		color    color.Color
+		mutex    sync.Mutex
 	}
-	Level uint8
 )
 
 const (
-	TRACE = iota
-	DEBUG
+	DEBUG = iota
 	INFO
-	NOTICE
 	WARN
 	ERROR
 	FATAL
@@ -34,159 +40,249 @@ const (
 )
 
 var (
-	global = New("-")
-	levels []string
+	global        = New("-")
+	defaultFormat = "time=${time_rfc3339}, level=${level}, prefix=${prefix}, file=${short_file}, " +
+		"line=${line}, message=${message}\n"
 )
 
 func New(prefix string) (l *Logger) {
 	l = &Logger{
-		level:  INFO,
-		prefix: prefix,
-		out:    colorable.NewColorableStdout(),
-		err:    colorable.NewColorableStderr(),
+		level:    INFO,
+		prefix:   prefix,
+		template: l.newTemplate(defaultFormat),
 	}
+	l.initLevels()
+	l.SetOutput(colorable.NewColorableStdout())
 	return
+}
+
+func (l *Logger) initLevels() {
+	l.levels = []string{
+		l.color.Blue("DEBUG"),
+		l.color.Green("INFO"),
+		l.color.Yellow("WARN"),
+		l.color.Red("ERROR"),
+		l.color.RedBg("FATAL"),
+	}
+}
+
+func (l *Logger) newTemplate(format string) *fasttemplate.Template {
+	return fasttemplate.New(format, "${", "}")
+}
+
+func (l *Logger) DisableColor() {
+	l.color.Disable()
+	l.initLevels()
+}
+
+func (l *Logger) EnableColor() {
+	l.color.Enable()
+	l.initLevels()
+}
+
+func (l *Logger) Prefix() string {
+	return l.prefix
 }
 
 func (l *Logger) SetPrefix(p string) {
 	l.prefix = p
 }
 
-func (l *Logger) SetLevel(v Level) {
-	l.level = v
-}
-
-func (l *Logger) Level() Level {
+func (l *Logger) Level() uint8 {
 	return l.level
 }
 
+func (l *Logger) SetLevel(v uint8) {
+	l.level = v
+}
+
+func (l *Logger) Output() io.Writer {
+	return l.output
+}
+
+func (l *Logger) SetFormat(f string) {
+	l.template = l.newTemplate(f)
+}
+
 func (l *Logger) SetOutput(w io.Writer) {
-	l.out = w
-	l.err = w
-
-	switch w := w.(type) {
-	case *os.File:
-		if isatty.IsTerminal(w.Fd()) {
-			color.Enable()
-		}
-	default:
-		color.Disable()
+	l.output = w
+	if w, ok := w.(*os.File); !ok || !isatty.IsTerminal(w.Fd()) {
+		l.DisableColor()
 	}
-
-	// NOTE: Reintialize levels to reflect color enable/disable call.
-	initLevels()
 }
 
-func (l *Logger) Print(msg interface{}, args ...interface{}) {
-	f := fmt.Sprintf("%s", msg)
-	fmt.Fprintf(l.out, f, args...)
+func (l *Logger) Print(i ...interface{}) {
+	fmt.Fprintln(l.output, i...)
 }
 
-func (l *Logger) Println(msg interface{}, args ...interface{}) {
-	f := fmt.Sprintf("%s\n", msg)
-	fmt.Fprintf(l.out, f, args...)
+func (l *Logger) Printf(format string, args ...interface{}) {
+	f := fmt.Sprintf("%s\n", format)
+	fmt.Fprintf(l.output, f, args...)
 }
 
-func (l *Logger) Trace(msg interface{}, args ...interface{}) {
-	l.log(TRACE, l.out, msg, args...)
+func (l *Logger) Debug(i ...interface{}) {
+	l.log(DEBUG, "", i...)
 }
 
-func (l *Logger) Debug(msg interface{}, args ...interface{}) {
-	l.log(DEBUG, l.out, msg, args...)
+func (l *Logger) Debugf(format string, args ...interface{}) {
+	l.log(DEBUG, format, args...)
 }
 
-func (l *Logger) Info(msg interface{}, args ...interface{}) {
-	l.log(INFO, l.out, msg, args...)
+func (l *Logger) Info(i ...interface{}) {
+	l.log(INFO, "", i...)
 }
 
-func (l *Logger) Notice(msg interface{}, args ...interface{}) {
-	l.log(NOTICE, l.out, msg, args...)
+func (l *Logger) Infof(format string, args ...interface{}) {
+	l.log(INFO, format, args...)
 }
 
-func (l *Logger) Warn(msg interface{}, args ...interface{}) {
-	l.log(WARN, l.out, msg, args...)
+func (l *Logger) Warn(i ...interface{}) {
+	l.log(WARN, "", i...)
 }
 
-func (l *Logger) Error(msg interface{}, args ...interface{}) {
-	l.log(ERROR, l.err, msg, args...)
+func (l *Logger) Warnf(format string, args ...interface{}) {
+	l.log(WARN, format, args...)
 }
 
-func (l *Logger) Fatal(msg interface{}, args ...interface{}) {
-	l.log(FATAL, l.err, msg, args...)
+func (l *Logger) Error(i ...interface{}) {
+	l.log(ERROR, "", i...)
+}
+
+func (l *Logger) Errorf(format string, args ...interface{}) {
+	l.log(ERROR, format, args...)
+}
+
+func (l *Logger) Fatal(i ...interface{}) {
+	l.log(FATAL, "", i...)
 	os.Exit(1)
+}
+
+func (l *Logger) Fatalf(format string, args ...interface{}) {
+	l.log(FATAL, format, args...)
+	os.Exit(1)
+}
+
+func DisableColor() {
+	global.DisableColor()
+}
+
+func EnableColor() {
+	global.EnableColor()
+}
+
+func Prefix() string {
+	return global.Prefix()
 }
 
 func SetPrefix(p string) {
 	global.SetPrefix(p)
 }
 
-func SetLevel(v Level) {
+func Level() uint8 {
+	return global.Level()
+}
+
+func SetLevel(v uint8) {
 	global.SetLevel(v)
+}
+
+func Output() io.Writer {
+	return global.Output()
 }
 
 func SetOutput(w io.Writer) {
 	global.SetOutput(w)
 }
 
-func Print(msg interface{}, args ...interface{}) {
-	global.Print(msg, args...)
+func SetFormat(f string) {
+	global.SetFormat(f)
 }
 
-func Println(msg interface{}, args ...interface{}) {
-	global.Println(msg, args...)
+func Print(i ...interface{}) {
+	global.Print(i...)
 }
 
-func Trace(msg interface{}, args ...interface{}) {
-	global.Trace(msg, args...)
+func Printf(format string, args ...interface{}) {
+	global.Printf(format, args...)
 }
 
-func Debug(msg interface{}, args ...interface{}) {
-	global.Debug(msg, args...)
+func Debug(i ...interface{}) {
+	global.Debug(i...)
 }
 
-func Info(msg interface{}, args ...interface{}) {
-	global.Info(msg, args...)
+func Debugf(format string, args ...interface{}) {
+	global.Debugf(format, args...)
 }
 
-func Notice(msg interface{}, args ...interface{}) {
-	global.Notice(msg, args...)
+func Info(i ...interface{}) {
+	global.Info(i...)
 }
 
-func Warn(msg interface{}, args ...interface{}) {
-	global.Warn(msg, args...)
+func Infof(format string, args ...interface{}) {
+	global.Infof(format, args...)
 }
 
-func Error(msg interface{}, args ...interface{}) {
-	global.Error(msg, args...)
+func Warn(i ...interface{}) {
+	global.Warn(i...)
 }
 
-func Fatal(msg interface{}, args ...interface{}) {
-	global.Fatal(msg, args...)
+func Warnf(format string, args ...interface{}) {
+	global.Warnf(format, args...)
 }
 
-func (l *Logger) log(v Level, w io.Writer, msg interface{}, args ...interface{}) {
-	l.mu.Lock()
-	defer l.mu.Unlock()
+func Error(i ...interface{}) {
+	global.Error(i...)
+}
+
+func Errorf(format string, args ...interface{}) {
+	global.Errorf(format, args...)
+}
+
+func Fatal(i ...interface{}) {
+	global.Fatal(i...)
+}
+
+func Fatalf(format string, args ...interface{}) {
+	global.Fatalf(format, args...)
+}
+
+func (l *Logger) log(v uint8, format string, args ...interface{}) {
+	l.mutex.Lock()
+	defer l.mutex.Unlock()
+
+	_, file, line, _ := runtime.Caller(3)
 
 	if v >= l.level {
-		// TODO: Improve performance
-		f := fmt.Sprintf("%s|%s|%v\n", levels[v], l.prefix, msg)
-		fmt.Fprintf(w, f, args...)
+		message := ""
+		if format == "" {
+			message = fmt.Sprint(args...)
+		} else {
+			message = fmt.Sprintf(format, args...)
+		}
+		if v == FATAL {
+			stack := make([]byte, 4<<10)
+			length := runtime.Stack(stack, true)
+			message = message + "\n" + string(stack[:length])
+		}
+		l.template.ExecuteFunc(l.output, func(w io.Writer, tag string) (int, error) {
+			switch tag {
+			case "time_rfc3339":
+				return w.Write([]byte(time.Now().Format(time.RFC3339)))
+			case "level":
+				return w.Write([]byte(l.levels[v]))
+			case "prefix":
+				return w.Write([]byte(l.prefix))
+			case "long_file":
+				return w.Write([]byte(file))
+			case "short_file":
+				return w.Write([]byte(path.Base(file)))
+			case "line":
+				return w.Write([]byte(strconv.Itoa(line)))
+			case "message":
+				return w.Write([]byte(message))
+			default:
+				return w.Write([]byte(fmt.Sprintf("[unknown tag %s]", tag)))
+			}
+		})
 	}
-}
-
-func initLevels() {
-	levels = []string{
-		color.Cyan("TRACE"),
-		color.Blue("DEBUG"),
-		color.Green("INFO"),
-		color.Magenta("NOTICE"),
-		color.Yellow("WARN"),
-		color.Red("ERROR"),
-		color.RedBg("FATAL"),
-	}
-}
-
-func init() {
-	initLevels()
 }

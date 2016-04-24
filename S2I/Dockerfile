@@ -1,12 +1,12 @@
 
-# amsokol/golang-openshift:1.6
+# amsokol/golang-openshift:1.6.2
 FROM openshift/base-centos7
 
-# TODO: Put the maintainer name in the image metadata
+# Maintainer name in the image metadata
 MAINTAINER Alexander Sokolovsky <amsokol@gmail.com>
 
-# TODO: Rename the builder environment variable to inform users about application you provide them
-ENV BUILDER_VERSION 1.0
+# Builder environment variable to inform users about application you provide them
+ENV GOLANG_OPENSHIFT_BUILDER_VERSION 1.0
 
 # Set labels used in OpenShift to describe the builder image
 LABEL io.k8s.description="Platform for building golang web application" \
@@ -14,24 +14,21 @@ LABEL io.k8s.description="Platform for building golang web application" \
       io.openshift.expose-services="8080:http" \
       io.openshift.tags="builder,1.0.0,golang"
 
-ENV GOLANG_VERSION 1.6
+# Install required packages here:
+# RUN yum install -y ... && yum clean all -y
+ENV GOLANG_VERSION 1.6.2
 ENV GOLANG_DOWNLOAD_URL https://golang.org/dl/go$GOLANG_VERSION.linux-amd64.tar.gz
 ENV GOLANG_DOWNLOAD_SHA256 5470eac05d273c74ff8bac7bef5bad0b5abbd1c4052efbdbc8db45332e836b0b
-
 RUN curl -fsSL "$GOLANG_DOWNLOAD_URL" -o golang.tar.gz \
     && echo "$GOLANG_DOWNLOAD_SHA256  golang.tar.gz" | sha256sum -c - \
 	&& tar -C /usr/local -xzf golang.tar.gz \
 	&& rm golang.tar.gz
-
 ENV PATH /usr/local/go/bin:$PATH
-
-# TODO: Install required packages here:
-# RUN yum install -y ... && yum clean all -y
 
 # TODO (optional): Copy the builder files into /opt/app-root
 # COPY ./<builder_folder>/ /opt/app-root/
 
-# Copy the S2I scripts to /usr/local/s2i, since openshift/base-centos7 image sets io.openshift.s2i.scripts-url label that way, or update that label
+# TODO: Copy the S2I scripts to /usr/libexec/s2i, since openshift/base-centos7 image sets io.openshift.s2i.scripts-url label that way, or update that label
 COPY ./.s2i/bin/ $STI_SCRIPTS_PATH
 ENV PATH $STI_SCRIPTS_PATH:$PATH
 

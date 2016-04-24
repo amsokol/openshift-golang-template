@@ -1,22 +1,22 @@
 #!/bin/bash -e
 #
-# S2I assemble script for the 'amsokol/golang-openshift:1.6' image.
+# S2I assemble script for the 'amsokol/golang-openshift:1.6.2' image.
 # The 'assemble' script builds your application source ready to run.
 #
 # For more information refer to the documentation:
 #	https://github.com/openshift/source-to-image/blob/master/docs/builder_image.md
 #
 
-if [ "$1" = "-h" ]; then
-	# If the 'amsokol/golang-openshift:1.6' assemble script is executed with '-h' flag,
+if [[ "$1" == "-h" ]]; then
+	# If the 'test1' assemble script is executed with '-h' flag,
 	# print the usage.
-	exec usage
+	exec /usr/libexec/s2i/usage
 fi
 
 # Restore artifacts from the previous build (if they exist).
 #
 if [ "$(ls /tmp/artifacts/ 2>/dev/null)" ]; then
-  echo "---> Restoring build artifacts"
+  echo "---> Restoring build artifacts..."
   mv /tmp/artifacts/. ./
 fi
 

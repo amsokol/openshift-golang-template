@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="GOPATH &lt;openshift-golang-template-example&gt;">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/../../.." />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+    <excluded>
+      <root url="file://$PROJECT_DIR$" />
+    </excluded>
+  </library>
+</component>

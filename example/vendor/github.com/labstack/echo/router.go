@@ -1,8 +1,8 @@
 package echo
 
-import "net/http"
-
 type (
+	// Router is the registry of all registered routes for an `Echo` instance for
+	// request matching and URL path parameter parsing.
 	Router struct {
 		tree   *node
 		routes []Route
@@ -17,7 +17,6 @@ type (
 		ppath         string
 		pnames        []string
 		methodHandler *methodHandler
-		echo          *Echo
 	}
 	kind          uint8
 	children      []*node
@@ -37,9 +36,10 @@ type (
 const (
 	skind kind = iota
 	pkind
-	mkind
+	akind
 )
 
+// NewRouter returns a new Router instance.
 func NewRouter(e *Echo) *Router {
 	return &Router{
 		tree: &node{
@@ -50,7 +50,15 @@ func NewRouter(e *Echo) *Router {
 	}
 }
 
+// Add registers a new route for method and path with matching handler.
 func (r *Router) Add(method, path string, h HandlerFunc, e *Echo) {
+	// Validate path
+	if path == "" {
+		e.logger.Fatal("path cannot be empty")
+	}
+	if path[0] != '/' {
+		path = "/" + path
+	}
 	ppath := path        // Pristine path
 	pnames := []string{} // Param names
 
@@ -74,7 +82,7 @@ func (r *Router) Add(method, path string, h HandlerFunc, e *Echo) {
 		} else if path[i] == '*' {
 			r.insert(method, path[:i], nil, skind, "", nil, e)
 			pnames = append(pnames, "_*")
-			r.insert(method, path[:i+1], h, mkind, ppath, pnames, e)
+			r.insert(method, path[:i+1], h, akind, ppath, pnames, e)
 			return
 		}
 	}
@@ -91,7 +99,7 @@ func (r *Router) insert(method, path string, h HandlerFunc, t kind, ppath string
 
 	cn := r.tree // Current node as root
 	if cn == nil {
-		panic("echo => invalid method")
+		panic("echo ⇛ invalid method")
 	}
 	search := path
 
@@ -117,11 +125,10 @@ func (r *Router) insert(method, path string, h HandlerFunc, t kind, ppath string
 				cn.addHandler(method, h)
 				cn.ppath = ppath
 				cn.pnames = pnames
-				cn.echo = e
 			}
 		} else if l < pl {
 			// Split node
-			n := newNode(cn.kind, cn.prefix[l:], cn, cn.children, cn.methodHandler, cn.ppath, cn.pnames, cn.echo)
+			n := newNode(cn.kind, cn.prefix[l:], cn, cn.children, cn.methodHandler, cn.ppath, cn.pnames)
 
 			// Reset parent node
 			cn.kind = skind
@@ -131,7 +138,6 @@ func (r *Router) insert(method, path string, h HandlerFunc, t kind, ppath string
 			cn.methodHandler = new(methodHandler)
 			cn.ppath = ""
 			cn.pnames = nil
-			cn.echo = nil
 
 			cn.addChild(n)
 
@@ -141,10 +147,9 @@ func (r *Router) insert(method, path string, h HandlerFunc, t kind, ppath string
 				cn.addHandler(method, h)
 				cn.ppath = ppath
 				cn.pnames = pnames
-				cn.echo = e
 			} else {
 				// Create child node
-				n = newNode(t, search[l:], cn, nil, new(methodHandler), ppath, pnames, e)
+				n = newNode(t, search[l:], cn, nil, new(methodHandler), ppath, pnames)
 				n.addHandler(method, h)
 				cn.addChild(n)
 			}
@@ -157,23 +162,22 @@ func (r *Router) insert(method, path string, h HandlerFunc, t kind, ppath string
 				continue
 			}
 			// Create child node
-			n := newNode(t, search, cn, nil, new(methodHandler), ppath, pnames, e)
+			n := newNode(t, search, cn, nil, new(methodHandler), ppath, pnames)
 			n.addHandler(method, h)
 			cn.addChild(n)
 		} else {
 			// Node already exists
 			if h != nil {
 				cn.addHandler(method, h)
-				cn.ppath = path
+				cn.ppath = ppath
 				cn.pnames = pnames
-				cn.echo = e
 			}
 		}
 		return
 	}
 }
 
-func newNode(t kind, pre string, p *node, c children, mh *methodHandler, ppath string, pnames []string, e *Echo) *node {
+func newNode(t kind, pre string, p *node, c children, mh *methodHandler, ppath string, pnames []string) *node {
 	return &node{
 		kind:          t,
 		label:         pre[0],
@@ -183,7 +187,6 @@ func newNode(t kind, pre string, p *node, c children, mh *methodHandler, ppath s
 		ppath:         ppath,
 		pnames:        pnames,
 		methodHandler: mh,
-		echo:          e,
 	}
 }
 
@@ -266,7 +269,7 @@ func (n *node) findHandler(method string) HandlerFunc {
 	}
 }
 
-func (n *node) check405() HandlerFunc {
+func (n *node) checkMethodNotAllowed() HandlerFunc {
 	for _, m := range methods {
 		if h := n.findHandler(m); h != nil {
 			return methodNotAllowedHandler
@@ -275,21 +278,28 @@ func (n *node) check405() HandlerFunc {
 	return notFoundHandler
 }
 
-func (r *Router) Find(method, path string, ctx *Context) (h HandlerFunc, e *Echo) {
-	h = notFoundHandler
-	e = r.echo
+// Find lookup a handler registed for method and path. It also parses URL for path
+// parameters and load them into context.
+//
+// For performance:
+//
+// - Get context from `Echo#GetContext()`
+// - Reset it `Context#Reset()`
+// - Return it `Echo#PutContext()`.
+func (r *Router) Find(method, path string, context Context) {
 	cn := r.tree // Current node as root
 
 	var (
-		search = path
-		c      *node  // Child node
-		n      int    // Param counter
-		nk     kind   // Next kind
-		nn     *node  // Next node
-		ns     string // Next search
+		search  = path
+		c       *node  // Child node
+		n       int    // Param counter
+		nk      kind   // Next kind
+		nn      *node  // Next node
+		ns      string // Next search
+		pvalues = context.ParamValues()
 	)
 
-	// Search order static > param > match-any
+	// Search order static > param > any
 	for {
 		if search == "" {
 			goto End
@@ -319,12 +329,11 @@ func (r *Router) Find(method, path string, ctx *Context) (h HandlerFunc, e *Echo
 			search = ns
 			if nk == pkind {
 				goto Param
-			} else if nk == mkind {
-				goto MatchAny
-			} else {
-				// Not found
-				return
+			} else if nk == akind {
+				goto Any
 			}
+			// Not found
+			return
 		}
 
 		if search == "" {
@@ -332,8 +341,7 @@ func (r *Router) Find(method, path string, ctx *Context) (h HandlerFunc, e *Echo
 		}
 
 		// Static node
-		c = cn.findChild(search[0], skind)
-		if c != nil {
+		if c = cn.findChild(search[0], skind); c != nil {
 			// Save next
 			if cn.label == '/' {
 				nk = pkind
@@ -346,66 +354,72 @@ func (r *Router) Find(method, path string, ctx *Context) (h HandlerFunc, e *Echo
 
 		// Param node
 	Param:
-		c = cn.findChildByKind(pkind)
-		if c != nil {
+		if c = cn.findChildByKind(pkind); c != nil {
+			// Issue #378
+			if len(pvalues) == n {
+				continue
+			}
+
 			// Save next
 			if cn.label == '/' {
-				nk = mkind
+				nk = akind
 				nn = cn
 				ns = search
 			}
+
 			cn = c
 			i, l := 0, len(search)
 			for ; i < l && search[i] != '/'; i++ {
 			}
-			ctx.pvalues[n] = search[:i]
+			pvalues[n] = search[:i]
 			n++
 			search = search[i:]
 			continue
 		}
 
-		// Match-any node
-	MatchAny:
-		// c = cn.getChild()
-		if cn = cn.findChildByKind(mkind); cn == nil {
+		// Any node
+	Any:
+		if cn = cn.findChildByKind(akind); cn == nil {
+			if nn != nil {
+				cn = nn
+				nn = nil // Next
+				search = ns
+				if nk == pkind {
+					goto Param
+				} else if nk == akind {
+					goto Any
+				}
+			}
 			// Not found
 			return
 		}
-		ctx.pvalues[len(cn.pnames)-1] = search
+		pvalues[len(cn.pnames)-1] = search
 		goto End
 	}
 
 End:
-	ctx.path = cn.ppath
-	ctx.pnames = cn.pnames
-	h = cn.findHandler(method)
-	if cn.echo != nil {
-		e = cn.echo
-	}
+	context.SetHandler(cn.findHandler(method))
+	context.SetPath(cn.ppath)
+	context.SetParamNames(cn.pnames...)
 
 	// NOTE: Slow zone...
-	if h == nil {
-		h = cn.check405()
+	if context.Handler() == nil {
+		context.SetHandler(cn.checkMethodNotAllowed())
 
-		// Dig further for match-any, might have an empty value for *, e.g.
+		// Dig further for any, might have an empty value for *, e.g.
 		// serving a directory. Issue #207.
-		if cn = cn.findChildByKind(mkind); cn == nil {
+		if cn = cn.findChildByKind(akind); cn == nil {
 			return
 		}
-		ctx.pvalues[len(cn.pnames)-1] = ""
-		if h = cn.findHandler(method); h == nil {
-			h = cn.check405()
+		if h := cn.findHandler(method); h != nil {
+			context.SetHandler(h)
+		} else {
+			context.SetHandler(cn.checkMethodNotAllowed())
 		}
+		context.SetPath(cn.ppath)
+		context.SetParamNames(cn.pnames...)
+		pvalues[len(cn.pnames)-1] = ""
 	}
-	return
-}
 
-func (r *Router) ServeHTTP(w http.ResponseWriter, req *http.Request) {
-	c := r.echo.pool.Get().(*Context)
-	h, _ := r.Find(req.Method, req.URL.Path, c)
-	c.reset(req, w, r.echo)
-	if err := h(c); err != nil {
-		r.echo.httpErrorHandler(err, c)
-	}
-	r.echo.pool.Put(c)
+	return
 }
