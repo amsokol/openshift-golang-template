@@ -1,7 +1,7 @@
 #!/bin/bash -e
 #
 # S2I assemble script for the 'amsokol/golang-openshift:1.6.2' image.
-# The 'assemble' script builds your application source ready to run.
+# The 'assemble' script builds your application source so that it is ready to run.
 #
 # For more information refer to the documentation:
 #	https://github.com/openshift/source-to-image/blob/master/docs/builder_image.md
