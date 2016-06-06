@@ -32,5 +32,5 @@ func main() {
 	std.SetHandler(e)
 
 	log.Printf("Starting app on port %+v\n", port)
-	graceful.ListenAndServe(std.Server, 5*time.Second)
+	graceful.ListenAndServe(std.Server, 1*time.Second)
 }

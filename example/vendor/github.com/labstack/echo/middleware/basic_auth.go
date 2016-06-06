@@ -9,31 +9,25 @@ import (
 type (
 	// BasicAuthConfig defines the config for HTTP basic auth middleware.
 	BasicAuthConfig struct {
-		// AuthFunc is the function to validate basic auth credentials.
-		AuthFunc BasicAuthFunc
+		// Validator is a function to validate basic auth credentials.
+		Validator BasicAuthValidator
 	}
 
-	// BasicAuthFunc defines a function to validate basic auth credentials.
-	BasicAuthFunc func(string, string) bool
+	// BasicAuthValidator defines a function to validate basic auth credentials.
+	BasicAuthValidator func(string, string) bool
 )
 
 const (
 	basic = "Basic"
 )
 
-var (
-	// DefaultBasicAuthConfig is the default basic auth middleware config.
-	DefaultBasicAuthConfig = BasicAuthConfig{}
-)
-
 // BasicAuth returns an HTTP basic auth middleware.
 //
 // For valid credentials it calls the next handler.
 // For invalid credentials, it sends "401 - Unauthorized" response.
-func BasicAuth(f BasicAuthFunc) echo.MiddlewareFunc {
-	c := DefaultBasicAuthConfig
-	c.AuthFunc = f
-	return BasicAuthWithConfig(c)
+// For empty or invalid `Authorization` header, it sends "400 - Bad Request" response.
+func BasicAuth(fn BasicAuthValidator) echo.MiddlewareFunc {
+	return BasicAuthWithConfig(BasicAuthConfig{fn})
 }
 
 // BasicAuthWithConfig returns an HTTP basic auth middleware from config.
@@ -46,18 +40,20 @@ func BasicAuthWithConfig(config BasicAuthConfig) echo.MiddlewareFunc {
 
 			if len(auth) > l+1 && auth[:l] == basic {
 				b, err := base64.StdEncoding.DecodeString(auth[l+1:])
-				if err == nil {
-					cred := string(b)
-					for i := 0; i < len(cred); i++ {
-						if cred[i] == ':' {
-							// Verify credentials
-							if config.AuthFunc(cred[:i], cred[i+1:]) {
-								return next(c)
-							}
+				if err != nil {
+					return err
+				}
+				cred := string(b)
+				for i := 0; i < len(cred); i++ {
+					if cred[i] == ':' {
+						// Verify credentials
+						if config.Validator(cred[:i], cred[i+1:]) {
+							return next(c)
 						}
 					}
 				}
 			}
+			// Need to return `401` for browsers to pop-up login box.
 			c.Response().Header().Set(echo.HeaderWWWAuthenticate, basic+" realm=Restricted")
 			return echo.ErrUnauthorized
 		}

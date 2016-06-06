@@ -7,7 +7,7 @@ import (
 
 	"net"
 
-	"github.com/labstack/gommon/log"
+	"github.com/labstack/echo/log"
 )
 
 type (
@@ -17,7 +17,7 @@ type (
 		SetHandler(Handler)
 
 		// SetLogger sets the logger for the HTTP server.
-		SetLogger(*log.Logger)
+		SetLogger(log.Logger)
 
 		// Start starts the HTTP server.
 		Start() error
@@ -47,12 +47,20 @@ type (
 		// Header returns `engine.Header`.
 		Header() Header
 
-		// Proto() string
-		// ProtoMajor() int
-		// ProtoMinor() int
+		// Referer returns the referring URL, if sent in the request.
+		Referer() string
+
+		// Protocol returns the protocol version string of the HTTP request.
+		// Protocol() string
+
+		// ProtocolMajor returns the major protocol version of the HTTP request.
+		// ProtocolMajor() int
+
+		// ProtocolMinor returns the minor protocol version of the HTTP request.
+		// ProtocolMinor() int
 
 		// ContentLength returns the size of request's body.
-		ContentLength() int
+		ContentLength() int64
 
 		// UserAgent returns the client's `User-Agent`.
 		UserAgent() string
@@ -69,6 +77,9 @@ type (
 		// Body returns request's body.
 		Body() io.Reader
 
+		// Body sets request's body.
+		SetBody(io.Reader)
+
 		// FormValue returns the form field value for the provided name.
 		FormValue(string) string
 
@@ -80,6 +91,12 @@ type (
 
 		// MultipartForm returns the multipart form.
 		MultipartForm() (*multipart.Form, error)
+
+		// Cookie returns the named cookie provided in the request.
+		Cookie(string) (Cookie, error)
+
+		// Cookies returns the HTTP cookies sent with the request.
+		Cookies() []Cookie
 	}
 
 	// Response defines the interface for HTTP response.
@@ -92,6 +109,9 @@ type (
 
 		// Write writes the data to the connection as part of an HTTP reply.
 		Write(b []byte) (int, error)
+
+		// SetCookie adds a `Set-Cookie` header in HTTP response.
+		SetCookie(Cookie)
 
 		// Status returns the HTTP response status.
 		Status() int
@@ -126,8 +146,11 @@ type (
 		// no values associated with the key, Get returns "".
 		Get(string) string
 
-		// Keys returns header keys.
+		// Keys returns the header keys.
 		Keys() []string
+
+		// Contains checks if the header is set.
+		Contains(string) bool
 	}
 
 	// URL defines the interface for HTTP request url.
@@ -146,6 +169,30 @@ type (
 
 		// QueryString returns the URL query string.
 		QueryString() string
+	}
+
+	// Cookie defines the interface for HTTP cookie.
+	Cookie interface {
+		// Name returns the name of the cookie.
+		Name() string
+
+		// Value returns the value of the cookie.
+		Value() string
+
+		// Path returns the path of the cookie.
+		Path() string
+
+		// Domain returns the domain of the cookie.
+		Domain() string
+
+		// Expires returns the expiry time of the cookie.
+		Expires() time.Time
+
+		// Secure indicates if cookie is secured.
+		Secure() bool
+
+		// HTTPOnly indicate if cookies is HTTP only.
+		HTTPOnly() bool
 	}
 
 	// Config defines engine config.
@@ -170,6 +217,6 @@ type (
 )
 
 // ServeHTTP serves HTTP request.
-func (h HandlerFunc) ServeHTTP(rq Request, rs Response) {
-	h(rq, rs)
+func (h HandlerFunc) ServeHTTP(req Request, res Response) {
+	h(req, res)
 }

@@ -15,9 +15,9 @@ import (
 type (
 	// GzipConfig defines the config for gzip middleware.
 	GzipConfig struct {
-		// Level is the gzip level.
-		// Optional, with default value as -1.
-		Level int
+		// Gzip compression level.
+		// Optional. Default value -1.
+		Level int `json:"level"`
 	}
 
 	gzipResponseWriter struct {
@@ -40,7 +40,7 @@ func Gzip() echo.MiddlewareFunc {
 }
 
 // GzipWithConfig return gzip middleware from config.
-// See `Gzip()`.
+// See: `Gzip()`.
 func GzipWithConfig(config GzipConfig) echo.MiddlewareFunc {
 	// Defaults
 	if config.Level == 0 {
@@ -52,27 +52,27 @@ func GzipWithConfig(config GzipConfig) echo.MiddlewareFunc {
 
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
-			rs := c.Response()
-			rs.Header().Add(echo.HeaderVary, echo.HeaderAcceptEncoding)
+			res := c.Response()
+			res.Header().Add(echo.HeaderVary, echo.HeaderAcceptEncoding)
 			if strings.Contains(c.Request().Header().Get(echo.HeaderAcceptEncoding), scheme) {
-				rw := rs.Writer()
+				rw := res.Writer()
 				gw := pool.Get().(*gzip.Writer)
 				gw.Reset(rw)
 				defer func() {
-					if rs.Size() == 0 {
+					if res.Size() == 0 {
 						// We have to reset response to it's pristine state when
 						// nothing is written to body or error is returned.
 						// See issue #424, #407.
-						rs.SetWriter(rw)
-						rs.Header().Del(echo.HeaderContentEncoding)
+						res.SetWriter(rw)
+						res.Header().Del(echo.HeaderContentEncoding)
 						gw.Reset(ioutil.Discard)
 					}
 					gw.Close()
 					pool.Put(gw)
 				}()
-				g := gzipResponseWriter{Response: rs, Writer: gw}
-				rs.Header().Set(echo.HeaderContentEncoding, scheme)
-				rs.SetWriter(g)
+				g := gzipResponseWriter{Response: res, Writer: gw}
+				res.Header().Set(echo.HeaderContentEncoding, scheme)
+				res.SetWriter(g)
 			}
 			return next(c)
 		}

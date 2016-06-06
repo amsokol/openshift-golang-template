@@ -12,24 +12,25 @@ import (
 	"time"
 
 	"github.com/labstack/echo/engine"
-	"github.com/labstack/gommon/log"
+	"github.com/labstack/echo/log"
 
 	"bytes"
 
-	netContext "golang.org/x/net/context"
+	"golang.org/x/net/context"
 )
 
 type (
 	// Context represents the context of the current HTTP request. It holds request and
 	// response objects, path, path parameters, data and registered handler.
 	Context interface {
-		netContext.Context
+		context.Context
 
-		// NetContext returns `http://blog.golang.org/context.Context` interface.
-		NetContext() netContext.Context
+		// StdContext returns `net/context.Context`. By default it is set the background
+		// context. To change the context, use SetStdContext().
+		StdContext() context.Context
 
-		// SetNetContext sets `http://blog.golang.org/context.Context` interface.
-		SetNetContext(netContext.Context)
+		// SetStdContext sets `net/context.Context`.
+		SetStdContext(context.Context)
 
 		// Request returns `engine.Request` interface.
 		Request() engine.Request
@@ -65,22 +66,37 @@ type (
 		// for `engine.URL#QueryParam()`.
 		QueryParam(string) string
 
-		// QueryParams returns the query parameters as map. It is an alias for `engine.URL#QueryParams()`.
+		// QueryParams returns the query parameters as map.
+		// It is an alias for `engine.URL#QueryParams()`.
 		QueryParams() map[string][]string
 
 		// FormValue returns the form field value for the provided name. It is an
 		// alias for `engine.Request#FormValue()`.
 		FormValue(string) string
 
-		// FormParams returns the form parameters as map. It is an alias for `engine.Request#FormParams()`.
+		// FormParams returns the form parameters as map.
+		// It is an alias for `engine.Request#FormParams()`.
 		FormParams() map[string][]string
 
 		// FormFile returns the multipart form file for the provided name. It is an
 		// alias for `engine.Request#FormFile()`.
 		FormFile(string) (*multipart.FileHeader, error)
 
-		// MultipartForm returns the multipart form. It is an alias for `engine.Request#MultipartForm()`.
+		// MultipartForm returns the multipart form.
+		// It is an alias for `engine.Request#MultipartForm()`.
 		MultipartForm() (*multipart.Form, error)
+
+		// Cookie returns the named cookie provided in the request.
+		// It is an alias for `engine.Request#Cookie()`.
+		Cookie(string) (engine.Cookie, error)
+
+		// SetCookie adds a `Set-Cookie` header in HTTP response.
+		// It is an alias for `engine.Response#SetCookie()`.
+		SetCookie(engine.Cookie)
+
+		// Cookies returns the HTTP cookies sent with the request.
+		// It is an alias for `engine.Request#Cookies()`.
+		Cookies() []engine.Cookie
 
 		// Get retrieves data from the context.
 		Get(string) interface{}
@@ -88,8 +104,11 @@ type (
 		// Set saves data in the context.
 		Set(string, interface{})
 
-		// Del data from the context
+		// Del deletes data from the context.
 		Del(string)
+
+		// Contains checks if the key exists in the context.
+		Contains(string) bool
 
 		// Bind binds the request body into provided type `i`. The default binder
 		// does it based on Content-Type header.
@@ -144,7 +163,7 @@ type (
 		SetHandler(HandlerFunc)
 
 		// Logger returns the `Logger` instance.
-		Logger() *log.Logger
+		Logger() log.Logger
 
 		// Echo returns the `Echo` instance.
 		Echo() *Echo
@@ -155,20 +174,21 @@ type (
 		ServeContent(io.ReadSeeker, string, time.Time) error
 
 		// Reset resets the context after request completes. It must be called along
-		// with `Echo#GetContext()` and `Echo#PutContext()`. See `Echo#ServeHTTP()`
+		// with `Echo#AcquireContext()` and `Echo#ReleaseContext()`.
+		// See `Echo#ServeHTTP()`
 		Reset(engine.Request, engine.Response)
 	}
 
-	context struct {
-		netContext netContext.Context
-		request    engine.Request
-		response   engine.Response
-		path       string
-		pnames     []string
-		pvalues    []string
-		store      store
-		handler    HandlerFunc
-		echo       *Echo
+	echoContext struct {
+		context  context.Context
+		request  engine.Request
+		response engine.Response
+		path     string
+		pnames   []string
+		pvalues  []string
+		store    store
+		handler  HandlerFunc
+		echo     *Echo
 	}
 
 	store map[string]interface{}
@@ -178,47 +198,47 @@ const (
 	indexPage = "index.html"
 )
 
-func (c *context) NetContext() netContext.Context {
-	return c.netContext
+func (c *echoContext) StdContext() context.Context {
+	return c.context
 }
 
-func (c *context) SetNetContext(ctx netContext.Context) {
-	c.netContext = ctx
+func (c *echoContext) SetStdContext(ctx context.Context) {
+	c.context = ctx
 }
 
-func (c *context) Deadline() (deadline time.Time, ok bool) {
-	return c.netContext.Deadline()
+func (c *echoContext) Deadline() (deadline time.Time, ok bool) {
+	return c.context.Deadline()
 }
 
-func (c *context) Done() <-chan struct{} {
-	return c.netContext.Done()
+func (c *echoContext) Done() <-chan struct{} {
+	return c.context.Done()
 }
 
-func (c *context) Err() error {
-	return c.netContext.Err()
+func (c *echoContext) Err() error {
+	return c.context.Err()
 }
 
-func (c *context) Value(key interface{}) interface{} {
-	return c.netContext.Value(key)
+func (c *echoContext) Value(key interface{}) interface{} {
+	return c.context.Value(key)
 }
 
-func (c *context) Request() engine.Request {
+func (c *echoContext) Request() engine.Request {
 	return c.request
 }
 
-func (c *context) Response() engine.Response {
+func (c *echoContext) Response() engine.Response {
 	return c.response
 }
 
-func (c *context) Path() string {
+func (c *echoContext) Path() string {
 	return c.path
 }
 
-func (c *context) SetPath(p string) {
+func (c *echoContext) SetPath(p string) {
 	c.path = p
 }
 
-func (c *context) P(i int) (value string) {
+func (c *echoContext) P(i int) (value string) {
 	l := len(c.pnames)
 	if i < l {
 		value = c.pvalues[i]
@@ -226,7 +246,7 @@ func (c *context) P(i int) (value string) {
 	return
 }
 
-func (c *context) Param(name string) (value string) {
+func (c *echoContext) Param(name string) (value string) {
 	l := len(c.pnames)
 	for i, n := range c.pnames {
 		if n == name && i < l {
@@ -237,66 +257,83 @@ func (c *context) Param(name string) (value string) {
 	return
 }
 
-func (c *context) ParamNames() []string {
+func (c *echoContext) ParamNames() []string {
 	return c.pnames
 }
 
-func (c *context) SetParamNames(names ...string) {
+func (c *echoContext) SetParamNames(names ...string) {
 	c.pnames = names
 }
 
-func (c *context) ParamValues() []string {
+func (c *echoContext) ParamValues() []string {
 	return c.pvalues
 }
 
-func (c *context) SetParamValues(values ...string) {
+func (c *echoContext) SetParamValues(values ...string) {
 	c.pvalues = values
 }
 
-func (c *context) QueryParam(name string) string {
+func (c *echoContext) QueryParam(name string) string {
 	return c.request.URL().QueryParam(name)
 }
 
-func (c *context) QueryParams() map[string][]string {
+func (c *echoContext) QueryParams() map[string][]string {
 	return c.request.URL().QueryParams()
 }
 
-func (c *context) FormValue(name string) string {
+func (c *echoContext) FormValue(name string) string {
 	return c.request.FormValue(name)
 }
 
-func (c *context) FormParams() map[string][]string {
+func (c *echoContext) FormParams() map[string][]string {
 	return c.request.FormParams()
 }
 
-func (c *context) FormFile(name string) (*multipart.FileHeader, error) {
+func (c *echoContext) FormFile(name string) (*multipart.FileHeader, error) {
 	return c.request.FormFile(name)
 }
 
-func (c *context) MultipartForm() (*multipart.Form, error) {
+func (c *echoContext) MultipartForm() (*multipart.Form, error) {
 	return c.request.MultipartForm()
 }
 
-func (c *context) Set(key string, val interface{}) {
+func (c *echoContext) Cookie(name string) (engine.Cookie, error) {
+	return c.request.Cookie(name)
+}
+
+func (c *echoContext) SetCookie(cookie engine.Cookie) {
+	c.response.SetCookie(cookie)
+}
+
+func (c *echoContext) Cookies() []engine.Cookie {
+	return c.request.Cookies()
+}
+
+func (c *echoContext) Set(key string, val interface{}) {
 	if c.store == nil {
 		c.store = make(store)
 	}
 	c.store[key] = val
 }
 
-func (c *context) Get(key string) interface{} {
+func (c *echoContext) Get(key string) interface{} {
 	return c.store[key]
 }
 
-func (c *context) Del(key string) {
+func (c *echoContext) Del(key string) {
 	delete(c.store, key)
 }
 
-func (c *context) Bind(i interface{}) error {
+func (c *echoContext) Contains(key string) bool {
+	_, ok := c.store[key]
+	return ok
+}
+
+func (c *echoContext) Bind(i interface{}) error {
 	return c.echo.binder.Bind(i, c)
 }
 
-func (c *context) Render(code int, name string, data interface{}) (err error) {
+func (c *echoContext) Render(code int, name string, data interface{}) (err error) {
 	if c.echo.renderer == nil {
 		return ErrRendererNotRegistered
 	}
@@ -310,21 +347,21 @@ func (c *context) Render(code int, name string, data interface{}) (err error) {
 	return
 }
 
-func (c *context) HTML(code int, html string) (err error) {
+func (c *echoContext) HTML(code int, html string) (err error) {
 	c.response.Header().Set(HeaderContentType, MIMETextHTMLCharsetUTF8)
 	c.response.WriteHeader(code)
 	_, err = c.response.Write([]byte(html))
 	return
 }
 
-func (c *context) String(code int, s string) (err error) {
+func (c *echoContext) String(code int, s string) (err error) {
 	c.response.Header().Set(HeaderContentType, MIMETextPlainCharsetUTF8)
 	c.response.WriteHeader(code)
 	_, err = c.response.Write([]byte(s))
 	return
 }
 
-func (c *context) JSON(code int, i interface{}) (err error) {
+func (c *echoContext) JSON(code int, i interface{}) (err error) {
 	b, err := json.Marshal(i)
 	if c.echo.Debug() {
 		b, err = json.MarshalIndent(i, "", "  ")
@@ -335,14 +372,14 @@ func (c *context) JSON(code int, i interface{}) (err error) {
 	return c.JSONBlob(code, b)
 }
 
-func (c *context) JSONBlob(code int, b []byte) (err error) {
+func (c *echoContext) JSONBlob(code int, b []byte) (err error) {
 	c.response.Header().Set(HeaderContentType, MIMEApplicationJSONCharsetUTF8)
 	c.response.WriteHeader(code)
 	_, err = c.response.Write(b)
 	return
 }
 
-func (c *context) JSONP(code int, callback string, i interface{}) (err error) {
+func (c *echoContext) JSONP(code int, callback string, i interface{}) (err error) {
 	b, err := json.Marshal(i)
 	if err != nil {
 		return err
@@ -359,7 +396,7 @@ func (c *context) JSONP(code int, callback string, i interface{}) (err error) {
 	return
 }
 
-func (c *context) XML(code int, i interface{}) (err error) {
+func (c *echoContext) XML(code int, i interface{}) (err error) {
 	b, err := xml.Marshal(i)
 	if c.echo.Debug() {
 		b, err = xml.MarshalIndent(i, "", "  ")
@@ -370,7 +407,7 @@ func (c *context) XML(code int, i interface{}) (err error) {
 	return c.XMLBlob(code, b)
 }
 
-func (c *context) XMLBlob(code int, b []byte) (err error) {
+func (c *echoContext) XMLBlob(code int, b []byte) (err error) {
 	c.response.Header().Set(HeaderContentType, MIMEApplicationXMLCharsetUTF8)
 	c.response.WriteHeader(code)
 	if _, err = c.response.Write([]byte(xml.Header)); err != nil {
@@ -380,7 +417,7 @@ func (c *context) XMLBlob(code int, b []byte) (err error) {
 	return
 }
 
-func (c *context) File(file string) error {
+func (c *echoContext) File(file string) error {
 	f, err := os.Open(file)
 	if err != nil {
 		return ErrNotFound
@@ -401,7 +438,7 @@ func (c *context) File(file string) error {
 	return c.ServeContent(f, fi.Name(), fi.ModTime())
 }
 
-func (c *context) Attachment(r io.ReadSeeker, name string) (err error) {
+func (c *echoContext) Attachment(r io.ReadSeeker, name string) (err error) {
 	c.response.Header().Set(HeaderContentType, ContentTypeByExtension(name))
 	c.response.Header().Set(HeaderContentDisposition, "attachment; filename="+name)
 	c.response.WriteHeader(http.StatusOK)
@@ -409,12 +446,12 @@ func (c *context) Attachment(r io.ReadSeeker, name string) (err error) {
 	return
 }
 
-func (c *context) NoContent(code int) error {
+func (c *echoContext) NoContent(code int) error {
 	c.response.WriteHeader(code)
 	return nil
 }
 
-func (c *context) Redirect(code int, url string) error {
+func (c *echoContext) Redirect(code int, url string) error {
 	if code < http.StatusMultipleChoices || code > http.StatusTemporaryRedirect {
 		return ErrInvalidRedirectCode
 	}
@@ -423,40 +460,40 @@ func (c *context) Redirect(code int, url string) error {
 	return nil
 }
 
-func (c *context) Error(err error) {
+func (c *echoContext) Error(err error) {
 	c.echo.httpErrorHandler(err, c)
 }
 
-func (c *context) Echo() *Echo {
+func (c *echoContext) Echo() *Echo {
 	return c.echo
 }
 
-func (c *context) Handler() HandlerFunc {
+func (c *echoContext) Handler() HandlerFunc {
 	return c.handler
 }
 
-func (c *context) SetHandler(h HandlerFunc) {
+func (c *echoContext) SetHandler(h HandlerFunc) {
 	c.handler = h
 }
 
-func (c *context) Logger() *log.Logger {
+func (c *echoContext) Logger() log.Logger {
 	return c.echo.logger
 }
 
-func (c *context) ServeContent(content io.ReadSeeker, name string, modtime time.Time) error {
-	rq := c.Request()
-	rs := c.Response()
+func (c *echoContext) ServeContent(content io.ReadSeeker, name string, modtime time.Time) error {
+	req := c.Request()
+	res := c.Response()
 
-	if t, err := time.Parse(http.TimeFormat, rq.Header().Get(HeaderIfModifiedSince)); err == nil && modtime.Before(t.Add(1*time.Second)) {
-		rs.Header().Del(HeaderContentType)
-		rs.Header().Del(HeaderContentLength)
+	if t, err := time.Parse(http.TimeFormat, req.Header().Get(HeaderIfModifiedSince)); err == nil && modtime.Before(t.Add(1*time.Second)) {
+		res.Header().Del(HeaderContentType)
+		res.Header().Del(HeaderContentLength)
 		return c.NoContent(http.StatusNotModified)
 	}
 
-	rs.Header().Set(HeaderContentType, ContentTypeByExtension(name))
-	rs.Header().Set(HeaderLastModified, modtime.UTC().Format(http.TimeFormat))
-	rs.WriteHeader(http.StatusOK)
-	_, err := io.Copy(rs, content)
+	res.Header().Set(HeaderContentType, ContentTypeByExtension(name))
+	res.Header().Set(HeaderLastModified, modtime.UTC().Format(http.TimeFormat))
+	res.WriteHeader(http.StatusOK)
+	_, err := io.Copy(res, content)
 	return err
 }
 
@@ -470,10 +507,10 @@ func ContentTypeByExtension(name string) (t string) {
 	return
 }
 
-func (c *context) Reset(rq engine.Request, rs engine.Response) {
-	c.netContext = nil
-	c.request = rq
-	c.response = rs
+func (c *echoContext) Reset(req engine.Request, res engine.Response) {
+	c.context = nil
+	c.request = req
+	c.response = res
 	c.store = nil
 	c.handler = notFoundHandler
 }

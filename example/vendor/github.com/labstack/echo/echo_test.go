@@ -17,16 +17,23 @@ import (
 
 type (
 	user struct {
-		ID   string `json:"id" xml:"id"`
-		Name string `json:"name" xml:"name"`
+		ID   int    `json:"id" xml:"id" form:"id"`
+		Name string `json:"name" xml:"name" form:"name"`
 	}
+)
+
+const (
+	userJSON       = `{"id":1,"name":"Jon Snow"}`
+	userXML        = `<user><id>1</id><name>Jon Snow</name></user>`
+	userForm       = `id=1&name=Jon Snow`
+	invalidContent = "invalid content"
 )
 
 func TestEcho(t *testing.T) {
 	e := New()
-	rq := test.NewRequest(GET, "/", nil)
-	rc := test.NewResponseRecorder()
-	c := e.NewContext(rq, rc)
+	req := test.NewRequest(GET, "/", nil)
+	rec := test.NewResponseRecorder()
+	c := e.NewContext(req, rec)
 
 	// Router
 	assert.NotNil(t, e.Router())
@@ -37,7 +44,7 @@ func TestEcho(t *testing.T) {
 
 	// DefaultHTTPErrorHandler
 	e.DefaultHTTPErrorHandler(errors.New("error"), c)
-	assert.Equal(t, http.StatusInternalServerError, rc.Status())
+	assert.Equal(t, http.StatusInternalServerError, rec.Status())
 }
 
 func TestEchoStatic(t *testing.T) {
@@ -229,9 +236,17 @@ func TestEchoRoutes(t *testing.T) {
 		})
 	}
 
-	for i, r := range e.Routes() {
-		assert.Equal(t, routes[i].Method, r.Method)
-		assert.Equal(t, routes[i].Path, r.Path)
+	for _, r := range e.Routes() {
+		found := false
+		for _, rr := range routes {
+			if r.Method == rr.Method && r.Path == rr.Path {
+				found = true
+				break
+			}
+		}
+		if !found {
+			t.Errorf("Route %s : %s not found", r.Method, r.Path)
+		}
 	}
 }
 
@@ -289,9 +304,9 @@ func TestEchoGroup(t *testing.T) {
 
 func TestEchoNotFound(t *testing.T) {
 	e := New()
-	rq := test.NewRequest(GET, "/files", nil)
+	req := test.NewRequest(GET, "/files", nil)
 	rec := test.NewResponseRecorder()
-	e.ServeHTTP(rq, rec)
+	e.ServeHTTP(req, rec)
 	assert.Equal(t, http.StatusNotFound, rec.Status())
 }
 
@@ -300,9 +315,9 @@ func TestEchoMethodNotAllowed(t *testing.T) {
 	e.GET("/", func(c Context) error {
 		return c.String(http.StatusOK, "Echo!")
 	})
-	rq := test.NewRequest(POST, "/", nil)
+	req := test.NewRequest(POST, "/", nil)
 	rec := test.NewResponseRecorder()
-	e.ServeHTTP(rq, rec)
+	e.ServeHTTP(req, rec)
 	assert.Equal(t, http.StatusMethodNotAllowed, rec.Status())
 }
 
@@ -328,8 +343,15 @@ func testMethod(t *testing.T, method, path string, e *Echo) {
 }
 
 func request(method, path string, e *Echo) (int, string) {
-	rq := test.NewRequest(method, path, nil)
+	req := test.NewRequest(method, path, nil)
 	rec := test.NewResponseRecorder()
-	e.ServeHTTP(rq, rec)
+	e.ServeHTTP(req, rec)
 	return rec.Status(), rec.Body.String()
+}
+
+func TestEchoBinder(t *testing.T) {
+	e := New()
+	b := &binder{}
+	e.SetBinder(b)
+	assert.Equal(t, b, e.Binder())
 }

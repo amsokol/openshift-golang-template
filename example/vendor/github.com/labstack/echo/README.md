@@ -1,7 +1,7 @@
 # *NOTICE*
 
 - Master branch, website and godoc now points to Echo v2.
-- Echo v2 is in beta but if you want to try it out here is the migrating [guide] (https://labstack.com/echo/guide/migrating)
+- Echo v2 is in beta but if you want to try it out here is the migrating [guide] (https://echo.labstack.com/guide/migrating)
 - Looking for v1?
 	- Installation: Use a package manager (https://github.com/Masterminds/glide, it's nice!) to get stable v1 release/commit or use `go get gopkg.in/labstack/echo.v1`.
 	- Godoc: https://godoc.org/gopkg.in/labstack/echo.v1
@@ -9,7 +9,7 @@
 
 # [Echo](http://labstack.com/echo) [![GoDoc](http://img.shields.io/badge/go-documentation-blue.svg?style=flat-square)](http://godoc.org/github.com/labstack/echo) [![License](http://img.shields.io/badge/license-mit-blue.svg?style=flat-square)](https://raw.githubusercontent.com/labstack/echo/master/LICENSE) [![Build Status](http://img.shields.io/travis/labstack/echo.svg?style=flat-square)](https://travis-ci.org/labstack/echo) [![Coverage Status](http://img.shields.io/coveralls/labstack/echo.svg?style=flat-square)](https://coveralls.io/r/labstack/echo) [![Join the chat at https://gitter.im/labstack/echo](https://img.shields.io/badge/gitter-join%20chat-brightgreen.svg?style=flat-square)](https://gitter.im/labstack/echo)
 
-#### Echo is a fast and unfancy HTTP server framework for Go (Golang). Up to 10x faster than the rest.
+#### Fast and unfancy HTTP server framework for Go (Golang). Up to 10x faster than the rest.
 
 ## Features
 
@@ -19,6 +19,7 @@
 - Group APIs.
 - Extensible middleware framework.
 - Define middleware at root, group or route level.
+- Data binding for JSON, XML and form payload.
 - Handy functions to send variety of HTTP responses.
 - Centralized HTTP error handling.
 - Template rendering with any template engine.
@@ -169,13 +170,13 @@ func save(c echo.Context) error {
 
 ### Handling Request
 
-- Bind `JSON` or `XML` payload into Go struct based on `Content-Type` request header.
+- Bind `JSON` or `XML` or `form` payload into Go struct based on `Content-Type` request header.
 - Render response as `JSON` or `XML` with status code.
 
 ```go
 type User struct {
-	Name  string `json:"name" xml:"name"`
-	Email string `json:"email" xml:"email"`
+	Name  string `json:"name" xml:"name" form:"name"`
+	Email string `json:"email" xml:"email" form:"email"`
 }
 
 e.POST("/users", func(c echo.Context) error {
@@ -197,9 +198,9 @@ Server any file from static directory for path `/static/*`.
 e.Static("/static", "static")
 ```
 
-##### [More...](https://labstack.com/echo/guide/static-files)
+##### [More...](https://echo.labstack.com/guide/static-files)
 
-### [Template Rendering](https://labstack.com/echo/guide/templates)
+### [Template Rendering](https://echo.labstack.com/guide/templates)
 
 ### Middleware
 
@@ -233,16 +234,21 @@ e.GET("/users", func(c echo.Context) error {
 
 Middleware | Description
 :--- | :---
-[Logger](https://labstack.com/echo/guide/middleware#logger-middleware:37ab2f15ff048f67959bcac0a6032f32) | Log HTTP requests
-[Recover](https://labstack.com/echo/guide/middleware#recover-middleware:37ab2f15ff048f67959bcac0a6032f32) | Recover from panics
-[Gzip](https://labstack.com/echo/guide/middleware#gzip-middleware:37ab2f15ff048f67959bcac0a6032f32) | Send gzip HTTP response
-[BasicAuth](https://labstack.com/echo/guide/middleware#basicauth-middleware:37ab2f15ff048f67959bcac0a6032f32) | HTTP basic authentication
-[CORS](https://labstack.com/echo/guide/middleware#cors-middleware:37ab2f15ff048f67959bcac0a6032f32) | Cross-Origin Resource Sharing
-[Static](https://labstack.com/echo/guide/static-files#using-static-middleware:123f9d1043075fe4874616541b409e4d) | Serve static files
-[AddTrailingSlash](https://labstack.com/echo/guide/middleware#addtrailingslash-middleware:37ab2f15ff048f67959bcac0a6032f32) | Add trailing slash to the request URI
-[RemoveTrailingSlash](https://labstack.com/echo/guide/middleware#removetrailingslash-middleware:37ab2f15ff048f67959bcac0a6032f32) | Remove trailing slash from the request URI
+[BodyLimit](https://echo.labstack.com/middleware/body-limit) | Limit request body
+[Logger](https://echo.labstack.com/middleware/logger) | Log HTTP requests
+[Recover](https://echo.labstack.com/middleware/recover) | Recover from panics
+[Gzip](https://echo.labstack.com/middleware/gzip) | Send gzip HTTP response
+[BasicAuth](https://echo.labstack.com/middleware/basic-auth) | HTTP basic authentication
+[JWTAuth](https://echo.labstack.com/middleware/jwt) | JWT authentication
+[Secure](https://echo.labstack.com/middleware/secure) | Protection against attacks
+[CORS](https://echo.labstack.com/middleware/cors) | Cross-Origin Resource Sharing
+[CSRF](https://echo.labstack.com/middleware/csrf) | Cross-Site Request Forgery
+[Static](https://echo.labstack.com/middleware/static) | Serve static files
+[AddTrailingSlash](https://echo.labstack.com/middleware/add-trailing-slash) | Add trailing slash to the request URI
+[RemoveTrailingSlash](https://echo.labstack.com/middleware/remove-trailing-slash) | Remove trailing slash from the request URI
+[MethodOverride](https://echo.labstack.com/middleware/method-override) | Override request method
 
-##### [More...](https://labstack.com/echo/guide/middleware)
+##### [More...](https://echo.labstack.com/middleware)
 
 #### Third-party Middleware
 
@@ -252,8 +258,8 @@ Middleware | Description
 
 ### Next
 
-- Head over to [guide](https://labstack.com/echo/guide/installation)
-- Browse [recipes](https://labstack.com/echo/recipes/hello-world)
+- Head over to [guide](https://echo.labstack.com/guide/installation)
+- Browse [recipes](https://echo.labstack.com/recipes/hello-world)
 
 ### Need help?
 

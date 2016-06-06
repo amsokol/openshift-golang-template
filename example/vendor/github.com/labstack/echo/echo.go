@@ -33,14 +33,12 @@ Example:
 	    e.Run(standard.New(":1323"))
 	}
 
-Learn more at https://labstack.com/echo
+Learn more at https://echo.labstack.com
 */
 package echo
 
 import (
 	"bytes"
-	"encoding/json"
-	"encoding/xml"
 	"errors"
 	"fmt"
 	"io"
@@ -48,11 +46,13 @@ import (
 	"path"
 	"reflect"
 	"runtime"
-	"strings"
 	"sync"
 
+	ncontext "golang.org/x/net/context"
+
 	"github.com/labstack/echo/engine"
-	"github.com/labstack/gommon/log"
+	"github.com/labstack/echo/log"
+	glog "github.com/labstack/gommon/log"
 )
 
 type (
@@ -68,7 +68,7 @@ type (
 		pool             sync.Pool
 		debug            bool
 		router           *Router
-		logger           *log.Logger
+		logger           log.Logger
 	}
 
 	// Route contains a handler and information for matching against requests.
@@ -92,14 +92,6 @@ type (
 
 	// HTTPErrorHandler is a centralized HTTP error handler.
 	HTTPErrorHandler func(error, Context)
-
-	// Binder is the interface that wraps the Bind function.
-	Binder interface {
-		Bind(interface{}, Context) error
-	}
-
-	binder struct {
-	}
 
 	// Validator is the interface that wraps the Validate function.
 	Validator interface {
@@ -151,17 +143,22 @@ const (
 // Headers
 const (
 	HeaderAcceptEncoding                = "Accept-Encoding"
+	HeaderAllow                         = "Allow"
 	HeaderAuthorization                 = "Authorization"
 	HeaderContentDisposition            = "Content-Disposition"
 	HeaderContentEncoding               = "Content-Encoding"
 	HeaderContentLength                 = "Content-Length"
 	HeaderContentType                   = "Content-Type"
+	HeaderCookie                        = "Cookie"
+	HeaderSetCookie                     = "Set-Cookie"
 	HeaderIfModifiedSince               = "If-Modified-Since"
 	HeaderLastModified                  = "Last-Modified"
 	HeaderLocation                      = "Location"
 	HeaderUpgrade                       = "Upgrade"
 	HeaderVary                          = "Vary"
 	HeaderWWWAuthenticate               = "WWW-Authenticate"
+	HeaderXForwardedProto               = "X-Forwarded-Proto"
+	HeaderXHTTPMethodOverride           = "X-HTTP-Method-Override"
 	HeaderXForwardedFor                 = "X-Forwarded-For"
 	HeaderXRealIP                       = "X-Real-IP"
 	HeaderServer                        = "Server"
@@ -174,6 +171,14 @@ const (
 	HeaderAccessControlAllowCredentials = "Access-Control-Allow-Credentials"
 	HeaderAccessControlExposeHeaders    = "Access-Control-Expose-Headers"
 	HeaderAccessControlMaxAge           = "Access-Control-Max-Age"
+
+	// Security
+	HeaderStrictTransportSecurity = "Strict-Transport-Security"
+	HeaderXContentTypeOptions     = "X-Content-Type-Options"
+	HeaderXXSSProtection          = "X-XSS-Protection"
+	HeaderXFrameOptions           = "X-Frame-Options"
+	HeaderContentSecurityPolicy   = "Content-Security-Policy"
+	HeaderXCSRFToken              = "X-CSRF-Token"
 )
 
 var (
@@ -192,12 +197,14 @@ var (
 
 // Errors
 var (
-	ErrUnsupportedMediaType  = NewHTTPError(http.StatusUnsupportedMediaType)
-	ErrNotFound              = NewHTTPError(http.StatusNotFound)
-	ErrUnauthorized          = NewHTTPError(http.StatusUnauthorized)
-	ErrMethodNotAllowed      = NewHTTPError(http.StatusMethodNotAllowed)
-	ErrRendererNotRegistered = errors.New("renderer not registered")
-	ErrInvalidRedirectCode   = errors.New("invalid redirect status code")
+	ErrUnsupportedMediaType        = NewHTTPError(http.StatusUnsupportedMediaType)
+	ErrNotFound                    = NewHTTPError(http.StatusNotFound)
+	ErrUnauthorized                = NewHTTPError(http.StatusUnauthorized)
+	ErrMethodNotAllowed            = NewHTTPError(http.StatusMethodNotAllowed)
+	ErrStatusRequestEntityTooLarge = NewHTTPError(http.StatusRequestEntityTooLarge)
+	ErrRendererNotRegistered       = errors.New("renderer not registered")
+	ErrInvalidRedirectCode         = errors.New("invalid redirect status code")
+	ErrCookieNotFound              = errors.New("cookie not found")
 )
 
 // Error handlers
@@ -222,17 +229,18 @@ func New() (e *Echo) {
 	// Defaults
 	e.SetHTTPErrorHandler(e.DefaultHTTPErrorHandler)
 	e.SetBinder(&binder{})
-	e.logger = log.New("echo")
-	e.logger.SetLevel(log.ERROR)
-
+	l := glog.New("echo")
+	l.SetLevel(glog.ERROR)
+	e.SetLogger(l)
 	return
 }
 
 // NewContext returns a Context instance.
-func (e *Echo) NewContext(rq engine.Request, rs engine.Response) Context {
-	return &context{
-		request:  rq,
-		response: rs,
+func (e *Echo) NewContext(req engine.Request, res engine.Response) Context {
+	return &echoContext{
+		context:  ncontext.Background(),
+		request:  req,
+		response: res,
 		echo:     e,
 		pvalues:  make([]string, *e.maxParam),
 		store:    make(store),
@@ -245,9 +253,14 @@ func (e *Echo) Router() *Router {
 	return e.router
 }
 
-// SetLogPrefix sets the prefix for the logger. Default value is `echo`.
-func (e *Echo) SetLogPrefix(prefix string) {
-	e.logger.SetPrefix(prefix)
+// Logger returns the logger instance.
+func (e *Echo) Logger() log.Logger {
+	return e.logger
+}
+
+// SetLogger defines a custom logger.
+func (e *Echo) SetLogger(l log.Logger) {
+	e.logger = l
 }
 
 // SetLogOutput sets the output destination for the logger. Default value is `os.Std*`
@@ -255,14 +268,9 @@ func (e *Echo) SetLogOutput(w io.Writer) {
 	e.logger.SetOutput(w)
 }
 
-// SetLogLevel sets the log level for the logger. Default value is `log.ERROR`.
+// SetLogLevel sets the log level for the logger. Default value `3` (ERROR).
 func (e *Echo) SetLogLevel(l uint8) {
 	e.logger.SetLevel(l)
-}
-
-// Logger returns the logger instance.
-func (e *Echo) Logger() *log.Logger {
-	return e.logger
 }
 
 // DefaultHTTPErrorHandler invokes the default HTTP error handler.
@@ -279,7 +287,7 @@ func (e *Echo) DefaultHTTPErrorHandler(err error, c Context) {
 	if !c.Response().Committed() {
 		c.String(code, msg)
 	}
-	e.logger.Debug(err)
+	e.logger.Error(err)
 }
 
 // SetHTTPErrorHandler registers a custom Echo.HTTPErrorHandler.
@@ -292,6 +300,11 @@ func (e *Echo) SetBinder(b Binder) {
 	e.binder = b
 }
 
+// Binder returns the binder instance.
+func (e *Echo) Binder() Binder {
+	return e.binder
+}
+
 // SetRenderer registers an HTML template renderer. It's invoked by `Context#Render()`.
 func (e *Echo) SetRenderer(r Renderer) {
 	e.renderer = r
@@ -300,7 +313,7 @@ func (e *Echo) SetRenderer(r Renderer) {
 // SetDebug enable/disable debug mode.
 func (e *Echo) SetDebug(on bool) {
 	e.debug = on
-	e.SetLogLevel(log.DEBUG)
+	e.SetLogLevel(glog.DEBUG)
 }
 
 // Debug returns debug mode (enabled or disabled).
@@ -463,7 +476,8 @@ func (e *Echo) add(method, path string, handler HandlerFunc, middleware ...Middl
 		Path:    path,
 		Handler: name,
 	}
-	e.router.routes = append(e.router.routes, r)
+	e.router.routes[method+path] = r
+	// e.router.routes = append(e.router.routes, r)
 }
 
 // Group creates a new router group with prefix and optional group-level middleware.
@@ -505,29 +519,43 @@ func (e *Echo) URL(h HandlerFunc, params ...interface{}) string {
 
 // Routes returns the registered routes.
 func (e *Echo) Routes() []Route {
-	return e.router.routes
+	routes := []Route{}
+	for _, v := range e.router.routes {
+		routes = append(routes, v)
+	}
+	return routes
 }
 
-// GetContext returns `Context` from the sync.Pool. You must return the context by
-// calling `PutContext()`.
+// AcquireContext returns an empty `Context` instance from the pool.
+// You must be return the context by calling `ReleaseContext()`.
+func (e *Echo) AcquireContext() Context {
+	return e.pool.Get().(Context)
+}
+
+// GetContext is deprecated, use `AcquireContext()` instead.
 func (e *Echo) GetContext() Context {
 	return e.pool.Get().(Context)
 }
 
-// PutContext returns `Context` instance back to the sync.Pool. You must call it after
-// `GetContext()`.
-func (e *Echo) PutContext(c Context) {
+// ReleaseContext returns the `Context` instance back to the pool.
+// You must call it after `AcquireContext()`.
+func (e *Echo) ReleaseContext(c Context) {
 	e.pool.Put(c)
 }
 
-func (e *Echo) ServeHTTP(rq engine.Request, rs engine.Response) {
-	c := e.pool.Get().(*context)
-	c.Reset(rq, rs)
+// PutContext is deprecated, use `ReleaseContext()` instead.
+func (e *Echo) PutContext(c Context) {
+	e.ReleaseContext(c)
+}
+
+func (e *Echo) ServeHTTP(req engine.Request, res engine.Response) {
+	c := e.pool.Get().(*echoContext)
+	c.Reset(req, res)
 
 	// Middleware
 	h := func(Context) error {
-		method := rq.Method()
-		path := rq.URL().Path()
+		method := req.Method()
+		path := req.URL().Path()
 		e.router.Find(method, path, c)
 		h := c.handler
 		for i := len(e.middleware) - 1; i >= 0; i-- {
@@ -572,22 +600,6 @@ func NewHTTPError(code int, msg ...string) *HTTPError {
 // Error makes it compatible with `error` interface.
 func (e *HTTPError) Error() string {
 	return e.Message
-}
-
-func (b *binder) Bind(i interface{}, c Context) (err error) {
-	rq := c.Request()
-	ct := rq.Header().Get(HeaderContentType)
-	err = ErrUnsupportedMediaType
-	if strings.HasPrefix(ct, MIMEApplicationJSON) {
-		if err = json.NewDecoder(rq.Body()).Decode(i); err != nil {
-			err = NewHTTPError(http.StatusBadRequest, err.Error())
-		}
-	} else if strings.HasPrefix(ct, MIMEApplicationXML) {
-		if err = xml.NewDecoder(rq.Body()).Decode(i); err != nil {
-			err = NewHTTPError(http.StatusBadRequest, err.Error())
-		}
-	}
-	return
 }
 
 // WrapMiddleware wrap `echo.HandlerFunc` into `echo.MiddlewareFunc`.

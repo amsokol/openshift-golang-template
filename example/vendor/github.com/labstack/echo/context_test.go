@@ -8,6 +8,7 @@ import (
 	"os"
 	"testing"
 	"text/template"
+	"time"
 
 	"strings"
 
@@ -30,14 +31,10 @@ func (t *Template) Render(w io.Writer, name string, data interface{}, c Context)
 }
 
 func TestContext(t *testing.T) {
-	userJSON := `{"id":"1","name":"Joe"}`
-	userXML := `<user><id>1</id><name>Joe</name></user>`
-	invalidContent := "invalid content"
-
 	e := New()
-	rq := test.NewRequest(POST, "/", strings.NewReader(userJSON))
-	rc := test.NewResponseRecorder()
-	c := e.NewContext(rq, rc).(*context)
+	req := test.NewRequest(POST, "/", strings.NewReader(userJSON))
+	rec := test.NewResponseRecorder()
+	c := e.NewContext(req, rec).(*echoContext)
 
 	// Request
 	assert.NotNil(t, c.Request())
@@ -58,26 +55,8 @@ func TestContext(t *testing.T) {
 	assert.Equal(t, "1", c.Param("id"))
 
 	// Store
-	c.Set("user", "Joe")
-	assert.Equal(t, "Joe", c.Get("user"))
-
-	//------
-	// Bind
-	//------
-
-	// JSON
-	testBindOk(t, c, MIMEApplicationJSON)
-	c.request = test.NewRequest(POST, "/", strings.NewReader(invalidContent))
-	testBindError(t, c, MIMEApplicationJSON)
-
-	// XML
-	c.request = test.NewRequest(POST, "/", strings.NewReader(userXML))
-	testBindOk(t, c, MIMEApplicationXML)
-	c.request = test.NewRequest(POST, "/", strings.NewReader(invalidContent))
-	testBindError(t, c, MIMEApplicationXML)
-
-	// Unsupported
-	testBindError(t, c, "")
+	c.Set("user", "Jon Snow")
+	assert.Equal(t, "Jon Snow", c.Get("user"))
 
 	//--------
 	// Render
@@ -87,113 +66,158 @@ func TestContext(t *testing.T) {
 		templates: template.Must(template.New("hello").Parse("Hello, {{.}}!")),
 	}
 	c.echo.SetRenderer(tpl)
-	err := c.Render(http.StatusOK, "hello", "Joe")
+	err := c.Render(http.StatusOK, "hello", "Jon Snow")
 	if assert.NoError(t, err) {
-		assert.Equal(t, http.StatusOK, rc.Status())
-		assert.Equal(t, "Hello, Joe!", rc.Body.String())
+		assert.Equal(t, http.StatusOK, rec.Status())
+		assert.Equal(t, "Hello, Jon Snow!", rec.Body.String())
 	}
 
 	c.echo.renderer = nil
-	err = c.Render(http.StatusOK, "hello", "Joe")
+	err = c.Render(http.StatusOK, "hello", "Jon Snow")
 	assert.Error(t, err)
 
 	// JSON
-	rc = test.NewResponseRecorder()
-	c = e.NewContext(rq, rc).(*context)
-	err = c.JSON(http.StatusOK, user{"1", "Joe"})
+	rec = test.NewResponseRecorder()
+	c = e.NewContext(req, rec).(*echoContext)
+	err = c.JSON(http.StatusOK, user{1, "Jon Snow"})
 	if assert.NoError(t, err) {
-		assert.Equal(t, http.StatusOK, rc.Status())
-		assert.Equal(t, MIMEApplicationJSONCharsetUTF8, rc.Header().Get(HeaderContentType))
-		assert.Equal(t, userJSON, rc.Body.String())
+		assert.Equal(t, http.StatusOK, rec.Status())
+		assert.Equal(t, MIMEApplicationJSONCharsetUTF8, rec.Header().Get(HeaderContentType))
+		assert.Equal(t, userJSON, rec.Body.String())
 	}
 
 	// JSON (error)
-	rc = test.NewResponseRecorder()
-	c = e.NewContext(rq, rc).(*context)
+	rec = test.NewResponseRecorder()
+	c = e.NewContext(req, rec).(*echoContext)
 	err = c.JSON(http.StatusOK, make(chan bool))
 	assert.Error(t, err)
 
 	// JSONP
-	rc = test.NewResponseRecorder()
-	c = e.NewContext(rq, rc).(*context)
+	rec = test.NewResponseRecorder()
+	c = e.NewContext(req, rec).(*echoContext)
 	callback := "callback"
-	err = c.JSONP(http.StatusOK, callback, user{"1", "Joe"})
+	err = c.JSONP(http.StatusOK, callback, user{1, "Jon Snow"})
 	if assert.NoError(t, err) {
-		assert.Equal(t, http.StatusOK, rc.Status())
-		assert.Equal(t, MIMEApplicationJavaScriptCharsetUTF8, rc.Header().Get(HeaderContentType))
-		assert.Equal(t, callback+"("+userJSON+");", rc.Body.String())
+		assert.Equal(t, http.StatusOK, rec.Status())
+		assert.Equal(t, MIMEApplicationJavaScriptCharsetUTF8, rec.Header().Get(HeaderContentType))
+		assert.Equal(t, callback+"("+userJSON+");", rec.Body.String())
 	}
 
 	// XML
-	rc = test.NewResponseRecorder()
-	c = e.NewContext(rq, rc).(*context)
-	err = c.XML(http.StatusOK, user{"1", "Joe"})
+	rec = test.NewResponseRecorder()
+	c = e.NewContext(req, rec).(*echoContext)
+	err = c.XML(http.StatusOK, user{1, "Jon Snow"})
 	if assert.NoError(t, err) {
-		assert.Equal(t, http.StatusOK, rc.Status())
-		assert.Equal(t, MIMEApplicationXMLCharsetUTF8, rc.Header().Get(HeaderContentType))
-		assert.Equal(t, xml.Header+userXML, rc.Body.String())
+		assert.Equal(t, http.StatusOK, rec.Status())
+		assert.Equal(t, MIMEApplicationXMLCharsetUTF8, rec.Header().Get(HeaderContentType))
+		assert.Equal(t, xml.Header+userXML, rec.Body.String())
 	}
 
 	// XML (error)
-	rc = test.NewResponseRecorder()
-	c = e.NewContext(rq, rc).(*context)
+	rec = test.NewResponseRecorder()
+	c = e.NewContext(req, rec).(*echoContext)
 	err = c.XML(http.StatusOK, make(chan bool))
 	assert.Error(t, err)
 
 	// String
-	rc = test.NewResponseRecorder()
-	c = e.NewContext(rq, rc).(*context)
+	rec = test.NewResponseRecorder()
+	c = e.NewContext(req, rec).(*echoContext)
 	err = c.String(http.StatusOK, "Hello, World!")
 	if assert.NoError(t, err) {
-		assert.Equal(t, http.StatusOK, rc.Status())
-		assert.Equal(t, MIMETextPlainCharsetUTF8, rc.Header().Get(HeaderContentType))
-		assert.Equal(t, "Hello, World!", rc.Body.String())
+		assert.Equal(t, http.StatusOK, rec.Status())
+		assert.Equal(t, MIMETextPlainCharsetUTF8, rec.Header().Get(HeaderContentType))
+		assert.Equal(t, "Hello, World!", rec.Body.String())
 	}
 
 	// HTML
-	rc = test.NewResponseRecorder()
-	c = e.NewContext(rq, rc).(*context)
+	rec = test.NewResponseRecorder()
+	c = e.NewContext(req, rec).(*echoContext)
 	err = c.HTML(http.StatusOK, "Hello, <strong>World!</strong>")
 	if assert.NoError(t, err) {
-		assert.Equal(t, http.StatusOK, rc.Status())
-		assert.Equal(t, MIMETextHTMLCharsetUTF8, rc.Header().Get(HeaderContentType))
-		assert.Equal(t, "Hello, <strong>World!</strong>", rc.Body.String())
+		assert.Equal(t, http.StatusOK, rec.Status())
+		assert.Equal(t, MIMETextHTMLCharsetUTF8, rec.Header().Get(HeaderContentType))
+		assert.Equal(t, "Hello, <strong>World!</strong>", rec.Body.String())
 	}
 
 	// Attachment
-	rc = test.NewResponseRecorder()
-	c = e.NewContext(rq, rc).(*context)
+	rec = test.NewResponseRecorder()
+	c = e.NewContext(req, rec).(*echoContext)
 	file, err := os.Open("_fixture/images/walle.png")
 	if assert.NoError(t, err) {
 		err = c.Attachment(file, "walle.png")
 		if assert.NoError(t, err) {
-			assert.Equal(t, http.StatusOK, rc.Status())
-			assert.Equal(t, "attachment; filename=walle.png", rc.Header().Get(HeaderContentDisposition))
-			assert.Equal(t, 219885, rc.Body.Len())
+			assert.Equal(t, http.StatusOK, rec.Status())
+			assert.Equal(t, "attachment; filename=walle.png", rec.Header().Get(HeaderContentDisposition))
+			assert.Equal(t, 219885, rec.Body.Len())
 		}
 	}
 
 	// NoContent
-	rc = test.NewResponseRecorder()
-	c = e.NewContext(rq, rc).(*context)
+	rec = test.NewResponseRecorder()
+	c = e.NewContext(req, rec).(*echoContext)
 	c.NoContent(http.StatusOK)
-	assert.Equal(t, http.StatusOK, rc.Status())
+	assert.Equal(t, http.StatusOK, rec.Status())
 
 	// Redirect
-	rc = test.NewResponseRecorder()
-	c = e.NewContext(rq, rc).(*context)
+	rec = test.NewResponseRecorder()
+	c = e.NewContext(req, rec).(*echoContext)
 	assert.Equal(t, nil, c.Redirect(http.StatusMovedPermanently, "http://labstack.github.io/echo"))
-	assert.Equal(t, http.StatusMovedPermanently, rc.Status())
-	assert.Equal(t, "http://labstack.github.io/echo", rc.Header().Get(HeaderLocation))
+	assert.Equal(t, http.StatusMovedPermanently, rec.Status())
+	assert.Equal(t, "http://labstack.github.io/echo", rec.Header().Get(HeaderLocation))
 
 	// Error
-	rc = test.NewResponseRecorder()
-	c = e.NewContext(rq, rc).(*context)
+	rec = test.NewResponseRecorder()
+	c = e.NewContext(req, rec).(*echoContext)
 	c.Error(errors.New("error"))
-	assert.Equal(t, http.StatusInternalServerError, rc.Status())
+	assert.Equal(t, http.StatusInternalServerError, rec.Status())
 
 	// Reset
-	c.Reset(rq, test.NewResponseRecorder())
+	c.Reset(req, test.NewResponseRecorder())
+}
+
+func TestContextCookie(t *testing.T) {
+	e := New()
+	req := test.NewRequest(GET, "/", nil)
+	theme := "theme=light"
+	user := "user=Jon Snow"
+	req.Header().Add(HeaderCookie, theme)
+	req.Header().Add(HeaderCookie, user)
+	rec := test.NewResponseRecorder()
+	c := e.NewContext(req, rec).(*echoContext)
+
+	// Read single
+	cookie, err := c.Cookie("theme")
+	if assert.NoError(t, err) {
+		assert.Equal(t, "theme", cookie.Name())
+		assert.Equal(t, "light", cookie.Value())
+	}
+
+	// Read multiple
+	for _, cookie := range c.Cookies() {
+		switch cookie.Name() {
+		case "theme":
+			assert.Equal(t, "light", cookie.Value())
+		case "user":
+			assert.Equal(t, "Jon Snow", cookie.Value())
+		}
+	}
+
+	// Write
+	cookie = &test.Cookie{&http.Cookie{
+		Name:     "SSID",
+		Value:    "Ap4PGTEq",
+		Domain:   "labstack.com",
+		Path:     "/",
+		Expires:  time.Now(),
+		Secure:   true,
+		HttpOnly: true,
+	}}
+	c.SetCookie(cookie)
+	assert.Contains(t, rec.Header().Get(HeaderSetCookie), "SSID")
+	assert.Contains(t, rec.Header().Get(HeaderSetCookie), "Ap4PGTEq")
+	assert.Contains(t, rec.Header().Get(HeaderSetCookie), "labstack.com")
+	assert.Contains(t, rec.Header().Get(HeaderSetCookie), "Secure")
+	assert.Contains(t, rec.Header().Get(HeaderSetCookie), "HttpOnly")
 }
 
 func TestContextPath(t *testing.T) {
@@ -215,9 +239,9 @@ func TestContextQueryParam(t *testing.T) {
 	q := make(url.Values)
 	q.Set("name", "joe")
 	q.Set("email", "joe@labstack.com")
-	rq := test.NewRequest(GET, "/?"+q.Encode(), nil)
+	req := test.NewRequest(GET, "/?"+q.Encode(), nil)
 	e := New()
-	c := e.NewContext(rq, nil)
+	c := e.NewContext(req, nil)
 	assert.Equal(t, "joe", c.QueryParam("name"))
 	assert.Equal(t, "joe@labstack.com", c.QueryParam("email"))
 }
@@ -228,10 +252,10 @@ func TestContextFormValue(t *testing.T) {
 	f.Set("email", "joe@labstack.com")
 
 	e := New()
-	rq := test.NewRequest(POST, "/", strings.NewReader(f.Encode()))
-	rq.Header().Add(HeaderContentType, MIMEApplicationForm)
+	req := test.NewRequest(POST, "/", strings.NewReader(f.Encode()))
+	req.Header().Add(HeaderContentType, MIMEApplicationForm)
 
-	c := e.NewContext(rq, nil)
+	c := e.NewContext(req, nil)
 	assert.Equal(t, "joe", c.FormValue("name"))
 	assert.Equal(t, "joe@labstack.com", c.FormValue("email"))
 }
@@ -244,9 +268,9 @@ func TestContextNetContext(t *testing.T) {
 
 func TestContextServeContent(t *testing.T) {
 	e := New()
-	rq := test.NewRequest(GET, "/", nil)
-	rc := test.NewResponseRecorder()
-	c := e.NewContext(rq, rc)
+	req := test.NewRequest(GET, "/", nil)
+	rec := test.NewResponseRecorder()
+	c := e.NewContext(req, rec)
 
 	fs := http.Dir("_fixture/images")
 	f, err := fs.Open("walle.png")
@@ -255,15 +279,15 @@ func TestContextServeContent(t *testing.T) {
 		if assert.NoError(t, err) {
 			// Not cached
 			if assert.NoError(t, c.ServeContent(f, fi.Name(), fi.ModTime())) {
-				assert.Equal(t, http.StatusOK, rc.Status())
+				assert.Equal(t, http.StatusOK, rec.Status())
 			}
 
 			// Cached
-			rc = test.NewResponseRecorder()
-			c = e.NewContext(rq, rc)
-			rq.Header().Set(HeaderIfModifiedSince, fi.ModTime().UTC().Format(http.TimeFormat))
+			rec = test.NewResponseRecorder()
+			c = e.NewContext(req, rec)
+			req.Header().Set(HeaderIfModifiedSince, fi.ModTime().UTC().Format(http.TimeFormat))
 			if assert.NoError(t, c.ServeContent(f, fi.Name(), fi.ModTime())) {
-				assert.Equal(t, http.StatusNotModified, rc.Status())
+				assert.Equal(t, http.StatusNotModified, rec.Status())
 			}
 		}
 	}
@@ -282,32 +306,4 @@ func TestContextHandler(t *testing.T) {
 	r.Find(GET, "/handler", c)
 	c.Handler()(c)
 	assert.Equal(t, "handler", b.String())
-}
-
-func testBindOk(t *testing.T, c Context, ct string) {
-	c.Request().Header().Set(HeaderContentType, ct)
-	u := new(user)
-	err := c.Bind(u)
-	if assert.NoError(t, err) {
-		assert.Equal(t, "1", u.ID)
-		assert.Equal(t, "Joe", u.Name)
-	}
-}
-
-func testBindError(t *testing.T, c Context, ct string) {
-	c.Request().Header().Set(HeaderContentType, ct)
-	u := new(user)
-	err := c.Bind(u)
-
-	switch ct {
-	case MIMEApplicationJSON, MIMEApplicationXML:
-		if assert.IsType(t, new(HTTPError), err) {
-			assert.Equal(t, http.StatusBadRequest, err.(*HTTPError).Code)
-		}
-	default:
-		if assert.IsType(t, new(HTTPError), err) {
-			assert.Equal(t, ErrUnsupportedMediaType, err)
-		}
-
-	}
 }

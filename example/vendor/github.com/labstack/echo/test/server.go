@@ -30,11 +30,11 @@ func New(addr string) *Server {
 	return NewConfig(c)
 }
 
-func NewTLS(addr, certfile, keyfile string) *Server {
+func NewTLS(addr, certFile, keyFile string) *Server {
 	c := &engine.Config{
 		Address:     addr,
-		TLSCertfile: certfile,
-		TLSKeyfile:  keyfile,
+		TLSCertfile: certFile,
+		TLSKeyfile:  keyFile,
 	}
 	return NewConfig(c)
 }
@@ -65,7 +65,7 @@ func NewConfig(c *engine.Config) (s *Server) {
 				},
 			},
 		},
-		handler: engine.HandlerFunc(func(rq engine.Request, rs engine.Response) {
+		handler: engine.HandlerFunc(func(req engine.Request, res engine.Response) {
 			s.logger.Fatal("handler not set")
 		}),
 		logger: log.New("echo"),
@@ -84,10 +84,10 @@ func (s *Server) SetLogger(l *log.Logger) {
 func (s *Server) Start() {
 	s.Addr = s.config.Address
 	s.Handler = s
-	certfile := s.config.TLSCertfile
-	keyfile := s.config.TLSKeyfile
-	if certfile != "" && keyfile != "" {
-		s.logger.Fatal(s.ListenAndServeTLS(certfile, keyfile))
+	certFile := s.config.TLSCertfile
+	keyFile := s.config.TLSKeyfile
+	if certFile != "" && keyFile != "" {
+		s.logger.Fatal(s.ListenAndServeTLS(certFile, keyFile))
 	} else {
 		s.logger.Fatal(s.ListenAndServe())
 	}
@@ -95,24 +95,24 @@ func (s *Server) Start() {
 
 func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// Request
-	rq := s.pool.request.Get().(*Request)
+	req := s.pool.request.Get().(*Request)
 	reqHdr := s.pool.header.Get().(*Header)
 	reqURL := s.pool.url.Get().(*URL)
 	reqHdr.reset(r.Header)
 	reqURL.reset(r.URL)
-	rq.reset(r, reqHdr, reqURL)
+	req.reset(r, reqHdr, reqURL)
 
 	// Response
-	rs := s.pool.response.Get().(*Response)
+	res := s.pool.response.Get().(*Response)
 	resHdr := s.pool.header.Get().(*Header)
 	resHdr.reset(w.Header())
-	rs.reset(w, resHdr)
+	res.reset(w, resHdr)
 
-	s.handler.ServeHTTP(rq, rs)
+	s.handler.ServeHTTP(req, res)
 
-	s.pool.request.Put(rq)
+	s.pool.request.Put(req)
 	s.pool.header.Put(reqHdr)
 	s.pool.url.Put(reqURL)
-	s.pool.response.Put(rs)
+	s.pool.response.Put(res)
 	s.pool.header.Put(resHdr)
 }

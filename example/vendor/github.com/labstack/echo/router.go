@@ -5,7 +5,7 @@ type (
 	// request matching and URL path parameter parsing.
 	Router struct {
 		tree   *node
-		routes []Route
+		routes map[string]Route
 		echo   *Echo
 	}
 	node struct {
@@ -45,7 +45,7 @@ func NewRouter(e *Echo) *Router {
 		tree: &node{
 			methodHandler: new(methodHandler),
 		},
-		routes: []Route{},
+		routes: make(map[string]Route),
 		echo:   e,
 	}
 }
@@ -283,9 +283,9 @@ func (n *node) checkMethodNotAllowed() HandlerFunc {
 //
 // For performance:
 //
-// - Get context from `Echo#GetContext()`
+// - Get context from `Echo#AcquireContext()`
 // - Reset it `Context#Reset()`
-// - Return it `Echo#PutContext()`.
+// - Return it `Echo#ReleaseContext()`.
 func (r *Router) Find(method, path string, context Context) {
 	cn := r.tree // Current node as root
 
