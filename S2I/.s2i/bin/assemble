@@ -1,0 +1,42 @@
+#!/bin/bash -e
+#
+# S2I assemble script for the 'amsokol/golang-openshift:1.6.2' image.
+# The 'assemble' script builds your application source so that it is ready to run.
+#
+# For more information refer to the documentation:
+#	https://github.com/openshift/source-to-image/blob/master/docs/builder_image.md
+#
+
+if [[ "$1" == "-h" ]]; then
+	# If the 'test1' assemble script is executed with '-h' flag,
+	# print the usage.
+	exec /usr/libexec/s2i/usage
+fi
+
+# Restore artifacts from the previous build (if they exist).
+#
+if [ "$(ls /tmp/artifacts/ 2>/dev/null)" ]; then
+  echo "---> Restoring build artifacts..."
+  mv /tmp/artifacts/. ./
+fi
+
+echo "---> Сlarify the root package for go application"
+ROOT_PACKAGE=$(echo "$SOURCE_REPOSITORY_URL" | sed -re "s/(https:\/\/|git@)([^?]+)\.git/\2/g" | sed -re "s/:/\//g")
+if [[ -n "${CONTEXT_DIR/[ ]*\n/}" ]]
+then
+    ROOT_PACKAGE="$ROOT_PACKAGE/$CONTEXT_DIR"
+    echo "CONTEXT_DIR is \"$CONTEXT_DIR\", so root package is \"$ROOT_PACKAGE\""
+else
+    echo "CONTEXT_DIR is empty, so root package is \"$ROOT_PACKAGE\""
+fi
+
+SOURCE_CODE="$GOPATH/src/$ROOT_PACKAGE"
+echo "---> Installing application source in folder \"$SOURCE_CODE\""
+mkdir -p $SOURCE_CODE
+cd $SOURCE_CODE
+cp -Rf /tmp/src/. ./
+echo "---> Source files are:"
+ls -R
+
+echo "---> Building application from source"
+go build -o goapplication4run
