@@ -1,4 +1,3 @@
-
 # amsokol/golang-openshift:1.7.1
 FROM openshift/base-centos7
 
@@ -15,9 +14,16 @@ LABEL io.k8s.description="Platform for building golang web application" \
       io.openshift.tags="builder,1.0.0,golang"
 
 # Install required packages here:
-# RUN yum install -y ... && yum clean all -y
+# gcc for cgo
+RUN yum install -y \
+    g++ \
+    gcc \
+    libc6-dev \
+    make \
+    && yum clean all -y
+
 ENV GOLANG_VERSION 1.7.1
-ENV GOLANG_DOWNLOAD_URL https://storage.googleapis.com/golang/go$GOLANG_VERSION.linux-amd64.tar.gz
+ENV GOLANG_DOWNLOAD_URL https://golang.org/dl/go$GOLANG_VERSION.linux-amd64.tar.gz
 ENV GOLANG_DOWNLOAD_SHA256 43ad621c9b014cde8db17393dc108378d37bc853aa351a6c74bf6432c1bbd182
 RUN curl -fsSL "$GOLANG_DOWNLOAD_URL" -o golang.tar.gz \
     && echo "$GOLANG_DOWNLOAD_SHA256  golang.tar.gz" | sha256sum -c - \
