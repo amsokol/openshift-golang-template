@@ -38,8 +38,8 @@ cp -Rf /tmp/src/. ./
 echo "---> Source files are:"
 ls -R
 
-echo "---> Downloading dependencies..."
-go get -v ./...
+# echo "---> Downloading dependencies..."
+# go get -v ./...
 
 echo "---> Building application from source"
 go build -o goapplication4run
