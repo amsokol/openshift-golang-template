@@ -7,17 +7,9 @@
 #	https://github.com/openshift/source-to-image/blob/master/docs/builder_image.md
 #
 
-echo "---> Сlarify the root package for go application"
-ROOT_PACKAGE=$(echo "$SOURCE_REPOSITORY_URL" | sed -re "s/(https:\/\/|git@)([^?]+)\.git/\2/g" | sed -re "s/:/\//g")
-if [[ -n "${CONTEXT_DIR/[ ]*\n/}" ]]
-then
-    ROOT_PACKAGE="$ROOT_PACKAGE/$CONTEXT_DIR"
-    echo "CONTEXT_DIR is \"$CONTEXT_DIR\", so root package is \"$ROOT_PACKAGE\""
-else
-    echo "CONTEXT_DIR is empty, so root package is \"$ROOT_PACKAGE\""
-fi
+echo "Root package is \"$ROOT\""
 
-SOURCE_CODE="$GOPATH/src/$ROOT_PACKAGE"
+SOURCE_CODE="$GOPATH/src/$ROOT"
 echo "---> Application is built in folder \"$SOURCE_CODE\""
 cd $SOURCE_CODE
 

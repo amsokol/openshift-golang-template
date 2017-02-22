@@ -1,4 +1,4 @@
-# amsokol/golang-openshift:1.8
+# amsokol/golang-openshift:1.8.0-1
 FROM openshift/base-centos7
 
 # Maintainer name in the image metadata
@@ -12,15 +12,6 @@ LABEL io.k8s.description="Platform for building golang web application" \
       io.k8s.display-name="builder 1.8.0-1" \
       io.openshift.expose-services="8080:http" \
       io.openshift.tags="builder,1.8.0-1,golang"
-
-# Install required packages here:
-# gcc for cgo
-RUN yum install -y \
-    g++ \
-    gcc \
-    libc6-dev \
-    make \
-    && yum clean all -y
 
 ENV GOLANG_VERSION 1.8
 ENV GOLANG_DOWNLOAD_URL https://golang.org/dl/go$GOLANG_VERSION.linux-amd64.tar.gz
