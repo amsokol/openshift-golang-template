@@ -1,37 +1,36 @@
 /*
-Package echo implements a fast and unfancy HTTP server framework for Go (Golang).
+Package echo implements high performance, minimalist Go web framework.
 
 Example:
 
-	package main
+  package main
 
-	import (
-	    "net/http"
+  import (
+    "net/http"
 
-	    "github.com/labstack/echo"
-	    "github.com/labstack/echo/engine/standard"
-	    "github.com/labstack/echo/middleware"
-	)
+    "github.com/labstack/echo"
+    "github.com/labstack/echo/middleware"
+  )
 
-	// Handler
-	func hello(c echo.Context) error {
-	    return c.String(http.StatusOK, "Hello, World!")
-	}
+  // Handler
+  func hello(c echo.Context) error {
+    return c.String(http.StatusOK, "Hello, World!")
+  }
 
-	func main() {
-	    // Echo instance
-	    e := echo.New()
+  func main() {
+    // Echo instance
+    e := echo.New()
 
-	    // Middleware
-	    e.Use(middleware.Logger())
-	    e.Use(middleware.Recover())
+    // Middleware
+    e.Use(middleware.Logger())
+    e.Use(middleware.Recover())
 
-	    // Routes
-	    e.GET("/", hello)
+    // Routes
+    e.GET("/", hello)
 
-	    // Start server
-	    e.Run(standard.New(":1323"))
-	}
+    // Start server
+    e.Logger.Fatal(e.Start(":1323"))
+  }
 
 Learn more at https://echo.labstack.com
 */
@@ -39,36 +38,48 @@ package echo
 
 import (
 	"bytes"
+	"crypto/tls"
 	"errors"
 	"fmt"
 	"io"
+	stdLog "log"
+	"net"
 	"net/http"
 	"path"
 	"reflect"
 	"runtime"
 	"sync"
+	"time"
 
-	"golang.org/x/net/context"
-
-	"github.com/labstack/echo/engine"
-	"github.com/labstack/echo/log"
-	glog "github.com/labstack/gommon/log"
+	"github.com/labstack/gommon/color"
+	"github.com/labstack/gommon/log"
+	"golang.org/x/crypto/acme/autocert"
 )
 
 type (
 	// Echo is the top-level framework instance.
 	Echo struct {
+		stdLogger        *stdLog.Logger
+		colorer          *color.Color
 		premiddleware    []MiddlewareFunc
 		middleware       []MiddlewareFunc
 		maxParam         *int
-		notFoundHandler  HandlerFunc
-		httpErrorHandler HTTPErrorHandler
-		binder           Binder
-		renderer         Renderer
-		pool             sync.Pool
-		debug            bool
 		router           *Router
-		logger           log.Logger
+		notFoundHandler  HandlerFunc
+		pool             sync.Pool
+		Server           *http.Server
+		TLSServer        *http.Server
+		Listener         net.Listener
+		TLSListener      net.Listener
+		DisableHTTP2     bool
+		Debug            bool
+		HTTPErrorHandler HTTPErrorHandler
+		Binder           Binder
+		Validator        Validator
+		Renderer         Renderer
+		AutoTLSManager   autocert.Manager
+		Mutex            sync.RWMutex
+		Logger           Logger
 	}
 
 	// Route contains a handler and information for matching against requests.
@@ -81,7 +92,7 @@ type (
 	// HTTPError represents an error that occurred while handling a request.
 	HTTPError struct {
 		Code    int
-		Message string
+		Message interface{}
 	}
 
 	// MiddlewareFunc defines a function to process middleware.
@@ -95,12 +106,20 @@ type (
 
 	// Validator is the interface that wraps the Validate function.
 	Validator interface {
-		Validate() error
+		Validate(i interface{}) error
 	}
 
 	// Renderer is the interface that wraps the Render function.
 	Renderer interface {
 		Render(io.Writer, string, interface{}, Context) error
+	}
+
+	// Map defines a generic map of type `map[string]interface{}`.
+	Map map[string]interface{}
+
+	// i is the interface for Echo and Group.
+	i interface {
+		GET(string, HandlerFunc, ...MiddlewareFunc)
 	}
 )
 
@@ -137,7 +156,7 @@ const (
 )
 
 const (
-	charsetUTF8 = "charset=utf-8"
+	charsetUTF8 = "charset=UTF-8"
 )
 
 // Headers
@@ -202,48 +221,57 @@ var (
 	ErrUnauthorized                = NewHTTPError(http.StatusUnauthorized)
 	ErrMethodNotAllowed            = NewHTTPError(http.StatusMethodNotAllowed)
 	ErrStatusRequestEntityTooLarge = NewHTTPError(http.StatusRequestEntityTooLarge)
-	ErrRendererNotRegistered       = errors.New("renderer not registered")
-	ErrInvalidRedirectCode         = errors.New("invalid redirect status code")
-	ErrCookieNotFound              = errors.New("cookie not found")
+	ErrValidatorNotRegistered      = errors.New("Validator not registered")
+	ErrRendererNotRegistered       = errors.New("Renderer not registered")
+	ErrInvalidRedirectCode         = errors.New("Invalid redirect status code")
+	ErrCookieNotFound              = errors.New("Cookie not found")
 )
 
 // Error handlers
 var (
-	notFoundHandler = func(c Context) error {
+	NotFoundHandler = func(c Context) error {
 		return ErrNotFound
 	}
 
-	methodNotAllowedHandler = func(c Context) error {
+	MethodNotAllowedHandler = func(c Context) error {
 		return ErrMethodNotAllowed
 	}
 )
 
 // New creates an instance of Echo.
 func New() (e *Echo) {
-	e = &Echo{maxParam: new(int)}
+	e = &Echo{
+		Server:    new(http.Server),
+		TLSServer: new(http.Server),
+		AutoTLSManager: autocert.Manager{
+			Prompt: autocert.AcceptTOS,
+		},
+		Logger:   log.New("echo"),
+		colorer:  color.New(),
+		maxParam: new(int),
+	}
+	e.Server.Handler = e
+	e.TLSServer.Handler = e
+	e.HTTPErrorHandler = e.DefaultHTTPErrorHandler
+	e.Binder = &DefaultBinder{}
+	e.Logger.SetLevel(log.OFF)
+	e.stdLogger = stdLog.New(e.Logger.Output(), e.Logger.Prefix()+": ", 0)
 	e.pool.New = func() interface{} {
 		return e.NewContext(nil, nil)
 	}
 	e.router = NewRouter(e)
-
-	// Defaults
-	e.SetHTTPErrorHandler(e.DefaultHTTPErrorHandler)
-	e.SetBinder(&binder{})
-	l := glog.New("echo")
-	l.SetLevel(glog.ERROR)
-	e.SetLogger(l)
 	return
 }
 
 // NewContext returns a Context instance.
-func (e *Echo) NewContext(req engine.Request, res engine.Response) Context {
-	return &echoContext{
-		context:  context.Background(),
-		request:  req,
-		response: res,
+func (e *Echo) NewContext(r *http.Request, w http.ResponseWriter) Context {
+	return &context{
+		request:  r,
+		response: NewResponse(w, e),
+		store:    make(Map),
 		echo:     e,
 		pvalues:  make([]string, *e.maxParam),
-		handler:  notFoundHandler,
+		handler:  NotFoundHandler,
 	}
 }
 
@@ -252,72 +280,39 @@ func (e *Echo) Router() *Router {
 	return e.router
 }
 
-// Logger returns the logger instance.
-func (e *Echo) Logger() log.Logger {
-	return e.logger
-}
-
-// SetLogger defines a custom logger.
-func (e *Echo) SetLogger(l log.Logger) {
-	e.logger = l
-}
-
-// SetLogOutput sets the output destination for the logger. Default value is `os.Std*`
-func (e *Echo) SetLogOutput(w io.Writer) {
-	e.logger.SetOutput(w)
-}
-
-// SetLogLevel sets the log level for the logger. Default value ERROR.
-func (e *Echo) SetLogLevel(l glog.Lvl) {
-	e.logger.SetLevel(l)
-}
-
-// DefaultHTTPErrorHandler invokes the default HTTP error handler.
+// DefaultHTTPErrorHandler is the default HTTP error handler. It sends a JSON response
+// with status code.
 func (e *Echo) DefaultHTTPErrorHandler(err error, c Context) {
-	code := http.StatusInternalServerError
-	msg := http.StatusText(code)
+	var (
+		code = http.StatusInternalServerError
+		msg  interface{}
+	)
+
 	if he, ok := err.(*HTTPError); ok {
 		code = he.Code
 		msg = he.Message
-	}
-	if e.debug {
+	} else if e.Debug {
 		msg = err.Error()
+	} else {
+		msg = http.StatusText(code)
 	}
-	if !c.Response().Committed() {
-		c.String(code, msg)
+	if _, ok := msg.(string); ok {
+		msg = Map{"message": msg}
 	}
-	e.logger.Error(err)
-}
 
-// SetHTTPErrorHandler registers a custom Echo.HTTPErrorHandler.
-func (e *Echo) SetHTTPErrorHandler(h HTTPErrorHandler) {
-	e.httpErrorHandler = h
-}
-
-// SetBinder registers a custom binder. It's invoked by `Context#Bind()`.
-func (e *Echo) SetBinder(b Binder) {
-	e.binder = b
-}
-
-// Binder returns the binder instance.
-func (e *Echo) Binder() Binder {
-	return e.binder
-}
-
-// SetRenderer registers an HTML template renderer. It's invoked by `Context#Render()`.
-func (e *Echo) SetRenderer(r Renderer) {
-	e.renderer = r
-}
-
-// SetDebug enable/disable debug mode.
-func (e *Echo) SetDebug(on bool) {
-	e.debug = on
-	e.SetLogLevel(glog.DEBUG)
-}
-
-// Debug returns debug mode (enabled or disabled).
-func (e *Echo) Debug() bool {
-	return e.debug
+	if !c.Response().Committed {
+		if c.Request().Method == HEAD { // Issue #608
+			if err := c.NoContent(code); err != nil {
+				goto ERROR
+			}
+		} else {
+			if err := c.JSON(code, msg); err != nil {
+				goto ERROR
+			}
+		}
+	}
+ERROR:
+	e.Logger.Error(err)
 }
 
 // Pre adds middleware to the chain which is run before router.
@@ -336,20 +331,10 @@ func (e *Echo) CONNECT(path string, h HandlerFunc, m ...MiddlewareFunc) {
 	e.add(CONNECT, path, h, m...)
 }
 
-// Connect is deprecated, use `CONNECT()` instead.
-func (e *Echo) Connect(path string, h HandlerFunc, m ...MiddlewareFunc) {
-	e.CONNECT(path, h, m...)
-}
-
 // DELETE registers a new DELETE route for a path with matching handler in the router
 // with optional route-level middleware.
 func (e *Echo) DELETE(path string, h HandlerFunc, m ...MiddlewareFunc) {
 	e.add(DELETE, path, h, m...)
-}
-
-// Delete is deprecated, use `DELETE()` instead.
-func (e *Echo) Delete(path string, h HandlerFunc, m ...MiddlewareFunc) {
-	e.DELETE(path, h, m...)
 }
 
 // GET registers a new GET route for a path with matching handler in the router
@@ -358,20 +343,10 @@ func (e *Echo) GET(path string, h HandlerFunc, m ...MiddlewareFunc) {
 	e.add(GET, path, h, m...)
 }
 
-// Get is deprecated, use `GET()` instead.
-func (e *Echo) Get(path string, h HandlerFunc, m ...MiddlewareFunc) {
-	e.GET(path, h, m...)
-}
-
 // HEAD registers a new HEAD route for a path with matching handler in the
 // router with optional route-level middleware.
 func (e *Echo) HEAD(path string, h HandlerFunc, m ...MiddlewareFunc) {
 	e.add(HEAD, path, h, m...)
-}
-
-// Head is deprecated, use `HEAD()` instead.
-func (e *Echo) Head(path string, h HandlerFunc, m ...MiddlewareFunc) {
-	e.HEAD(path, h, m...)
 }
 
 // OPTIONS registers a new OPTIONS route for a path with matching handler in the
@@ -380,20 +355,10 @@ func (e *Echo) OPTIONS(path string, h HandlerFunc, m ...MiddlewareFunc) {
 	e.add(OPTIONS, path, h, m...)
 }
 
-// Options is deprecated, use `OPTIONS()` instead.
-func (e *Echo) Options(path string, h HandlerFunc, m ...MiddlewareFunc) {
-	e.OPTIONS(path, h, m...)
-}
-
 // PATCH registers a new PATCH route for a path with matching handler in the
 // router with optional route-level middleware.
 func (e *Echo) PATCH(path string, h HandlerFunc, m ...MiddlewareFunc) {
 	e.add(PATCH, path, h, m...)
-}
-
-// Patch is deprecated, use `PATCH()` instead.
-func (e *Echo) Patch(path string, h HandlerFunc, m ...MiddlewareFunc) {
-	e.PATCH(path, h, m...)
 }
 
 // POST registers a new POST route for a path with matching handler in the
@@ -402,31 +367,16 @@ func (e *Echo) POST(path string, h HandlerFunc, m ...MiddlewareFunc) {
 	e.add(POST, path, h, m...)
 }
 
-// Post is deprecated, use `POST()` instead.
-func (e *Echo) Post(path string, h HandlerFunc, m ...MiddlewareFunc) {
-	e.POST(path, h, m...)
-}
-
 // PUT registers a new PUT route for a path with matching handler in the
 // router with optional route-level middleware.
 func (e *Echo) PUT(path string, h HandlerFunc, m ...MiddlewareFunc) {
 	e.add(PUT, path, h, m...)
 }
 
-// Put is deprecated, use `PUT()` instead.
-func (e *Echo) Put(path string, h HandlerFunc, m ...MiddlewareFunc) {
-	e.PUT(path, h, m...)
-}
-
 // TRACE registers a new TRACE route for a path with matching handler in the
 // router with optional route-level middleware.
 func (e *Echo) TRACE(path string, h HandlerFunc, m ...MiddlewareFunc) {
 	e.add(TRACE, path, h, m...)
-}
-
-// Trace is deprecated, use `TRACE()` instead.
-func (e *Echo) Trace(path string, h HandlerFunc, m ...MiddlewareFunc) {
-	e.TRACE(path, h, m...)
 }
 
 // Any registers a new route for all HTTP methods and path with matching handler
@@ -448,9 +398,19 @@ func (e *Echo) Match(methods []string, path string, handler HandlerFunc, middlew
 // Static registers a new route with path prefix to serve static files from the
 // provided root directory.
 func (e *Echo) Static(prefix, root string) {
-	e.GET(prefix+"*", func(c Context) error {
-		return c.File(path.Join(root, c.P(0)))
-	})
+	static(e, prefix, root)
+}
+
+func static(i i, prefix, root string) {
+	h := func(c Context) error {
+		return c.File(path.Join(root, c.Param("*")))
+	}
+	i.GET(prefix, h)
+	if prefix == "/" {
+		i.GET(prefix+"*", h)
+	} else {
+		i.GET(prefix+"/*", h)
+	}
 }
 
 // File registers a new route with path to serve a static file.
@@ -469,7 +429,7 @@ func (e *Echo) add(method, path string, handler HandlerFunc, middleware ...Middl
 			h = middleware[i](h)
 		}
 		return h(c)
-	}, e)
+	})
 	r := Route{
 		Method:  method,
 		Path:    path,
@@ -525,7 +485,7 @@ func (e *Echo) Routes() []Route {
 }
 
 // AcquireContext returns an empty `Context` instance from the pool.
-// You must be return the context by calling `ReleaseContext()`.
+// You must return the context by calling `ReleaseContext()`.
 func (e *Echo) AcquireContext() Context {
 	return e.pool.Get().(Context)
 }
@@ -536,16 +496,23 @@ func (e *Echo) ReleaseContext(c Context) {
 	e.pool.Put(c)
 }
 
-func (e *Echo) ServeHTTP(req engine.Request, res engine.Response) {
-	c := e.pool.Get().(*echoContext)
-	c.Reset(req, res)
+// ServeHTTP implements `http.Handler` interface, which serves HTTP requests.
+func (e *Echo) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	// Acquire lock
+	e.Mutex.RLock()
+	defer e.Mutex.RUnlock()
+
+	// Acquire context
+	c := e.pool.Get().(*context)
+	defer e.pool.Put(c)
+	c.Reset(r, w)
 
 	// Middleware
-	h := func(Context) error {
-		method := req.Method()
-		path := req.URL().Path()
+	h := func(c Context) error {
+		method := r.Method
+		path := r.URL.EscapedPath()
 		e.router.Find(method, path, c)
-		h := c.handler
+		h := c.Handler()
 		for i := len(e.middleware) - 1; i >= 0; i-- {
 			h = e.middleware[i](h)
 		}
@@ -559,45 +526,107 @@ func (e *Echo) ServeHTTP(req engine.Request, res engine.Response) {
 
 	// Execute chain
 	if err := h(c); err != nil {
-		e.httpErrorHandler(err, c)
+		e.HTTPErrorHandler(err, c)
 	}
-
-	e.pool.Put(c)
 }
 
-// Run starts the HTTP server.
-func (e *Echo) Run(s engine.Server) {
-	s.SetHandler(e)
-	s.SetLogger(e.logger)
-	if e.Debug() {
-		e.logger.Debug("running in debug mode")
+// Start starts an HTTP server.
+func (e *Echo) Start(address string) error {
+	e.Server.Addr = address
+	return e.StartServer(e.Server)
+}
+
+// StartTLS starts an HTTPS server.
+func (e *Echo) StartTLS(address string, certFile, keyFile string) (err error) {
+	if certFile == "" || keyFile == "" {
+		return errors.New("invalid tls configuration")
 	}
-	e.logger.Error(s.Start())
+	s := e.TLSServer
+	s.TLSConfig = new(tls.Config)
+	s.TLSConfig.Certificates = make([]tls.Certificate, 1)
+	s.TLSConfig.Certificates[0], err = tls.LoadX509KeyPair(certFile, keyFile)
+	if err != nil {
+		return
+	}
+	return e.startTLS(address)
+}
+
+// StartAutoTLS starts an HTTPS server using certificates automatically installed from https://letsencrypt.org.
+func (e *Echo) StartAutoTLS(address string) error {
+	s := e.TLSServer
+	s.TLSConfig = new(tls.Config)
+	s.TLSConfig.GetCertificate = e.AutoTLSManager.GetCertificate
+	return e.startTLS(address)
+}
+
+func (e *Echo) startTLS(address string) error {
+	s := e.TLSServer
+	s.Addr = address
+	if !e.DisableHTTP2 {
+		s.TLSConfig.NextProtos = append(s.TLSConfig.NextProtos, "h2")
+	}
+	return e.StartServer(e.TLSServer)
+}
+
+// StartServer starts a custom http server.
+func (e *Echo) StartServer(s *http.Server) (err error) {
+	// Setup
+	e.colorer.SetOutput(e.Logger.Output())
+	s.Handler = e
+	s.ErrorLog = e.stdLogger
+
+	if s.TLSConfig == nil {
+		if e.Listener == nil {
+			e.Listener, err = newListener(s.Addr)
+			if err != nil {
+				return err
+			}
+		}
+		e.colorer.Printf("⇛ http server started on %s\n", e.colorer.Green(e.Listener.Addr()))
+		return s.Serve(e.Listener)
+	}
+	if e.TLSListener == nil {
+		l, err := newListener(s.Addr)
+		if err != nil {
+			return err
+		}
+		e.TLSListener = tls.NewListener(l, s.TLSConfig)
+	}
+	e.colorer.Printf("⇛ https server started on %s\n", e.colorer.Green(e.TLSListener.Addr()))
+	return s.Serve(e.TLSListener)
 }
 
 // NewHTTPError creates a new HTTPError instance.
-func NewHTTPError(code int, msg ...string) *HTTPError {
+func NewHTTPError(code int, message ...interface{}) *HTTPError {
 	he := &HTTPError{Code: code, Message: http.StatusText(code)}
-	if len(msg) > 0 {
-		m := msg[0]
-		he.Message = m
+	if len(message) > 0 {
+		he.Message = message[0]
 	}
 	return he
 }
 
 // Error makes it compatible with `error` interface.
-func (e *HTTPError) Error() string {
-	return e.Message
+func (he *HTTPError) Error() string {
+	return fmt.Sprintf("code=%d, message=%s", he.Code, he.Message)
 }
 
-// WrapMiddleware wrap `echo.HandlerFunc` into `echo.MiddlewareFunc`.
-func WrapMiddleware(h HandlerFunc) MiddlewareFunc {
+// WrapHandler wraps `http.Handler` into `echo.HandlerFunc`.
+func WrapHandler(h http.Handler) HandlerFunc {
+	return func(c Context) error {
+		h.ServeHTTP(c.Response(), c.Request())
+		return nil
+	}
+}
+
+// WrapMiddleware wraps `func(http.Handler) http.Handler` into `echo.MiddlewareFunc`
+func WrapMiddleware(m func(http.Handler) http.Handler) MiddlewareFunc {
 	return func(next HandlerFunc) HandlerFunc {
-		return func(c Context) error {
-			if err := h(c); err != nil {
-				return err
-			}
-			return next(c)
+		return func(c Context) (err error) {
+			m(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				c.SetRequest(r)
+				err = next(c)
+			})).ServeHTTP(c.Response(), c.Request())
+			return
 		}
 	}
 }
@@ -608,4 +637,30 @@ func handlerName(h HandlerFunc) string {
 		return runtime.FuncForPC(reflect.ValueOf(h).Pointer()).Name()
 	}
 	return t.String()
+}
+
+// tcpKeepAliveListener sets TCP keep-alive timeouts on accepted
+// connections. It's used by ListenAndServe and ListenAndServeTLS so
+// dead TCP connections (e.g. closing laptop mid-download) eventually
+// go away.
+type tcpKeepAliveListener struct {
+	*net.TCPListener
+}
+
+func (ln tcpKeepAliveListener) Accept() (c net.Conn, err error) {
+	tc, err := ln.AcceptTCP()
+	if err != nil {
+		return
+	}
+	tc.SetKeepAlive(true)
+	tc.SetKeepAlivePeriod(3 * time.Minute)
+	return tc, nil
+}
+
+func newListener(address string) (*tcpKeepAliveListener, error) {
+	l, err := net.Listen("tcp", address)
+	if err != nil {
+		return nil, err
+	}
+	return &tcpKeepAliveListener{l.(*net.TCPListener)}, nil
 }

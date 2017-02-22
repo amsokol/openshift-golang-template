@@ -1,6 +1,6 @@
 #!/bin/bash -e
 #
-# S2I run script for the 'amsokol/golang-openshift:1.6.2' image.
+# S2I run script for the 'amsokol/golang-openshift:1.8.0-1' image.
 # The run script executes the server that runs your application.
 #
 # For more information see the documentation:

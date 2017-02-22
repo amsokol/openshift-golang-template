@@ -3,7 +3,7 @@ apiVersion: v1
 metadata:
   name: golang
   annotations:
-    description: Application template for Golang 1.7.1
+    description: Application template for Go 1.8.0
     tags: 'Go language'
 labels:
   application: golang
@@ -19,7 +19,7 @@ parameters:
   - name: S2I_IMAGE_URL
     description: S2I image url"
     required: true
-    value: 'docker.io/amsokol/golang-openshift:1.7.1'
+    value: 'docker.io/amsokol/golang-openshift:1.8.0-1'
   - name: SOURCE_REPOSITORY_URL
     description: Git source URI for application, e. g. "https://github.com/amsokol/openshift-golang-template.git"
     required: true

@@ -2,66 +2,63 @@ package middleware
 
 import (
 	"net/http"
+	"net/http/httptest"
 	"testing"
 
 	"github.com/labstack/echo"
-	"github.com/labstack/echo/test"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestStatic(t *testing.T) {
 	e := echo.New()
-	req := test.NewRequest(echo.GET, "/", nil)
-	rec := test.NewResponseRecorder()
+	// TODO: Once go1.6 is dropped, use `httptest.Request()`.
+	req, _ := http.NewRequest(echo.GET, "/", nil)
+	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
-	h := Static("../_fixture")(func(c echo.Context) error {
-		return echo.ErrNotFound
-	})
+	c.SetParamNames("*")
+	config := StaticConfig{
+		Root: "../_fixture",
+	}
 
 	// Directory
+	h := StaticWithConfig(config)(echo.NotFoundHandler)
 	if assert.NoError(t, h(c)) {
 		assert.Contains(t, rec.Body.String(), "Echo")
 	}
 
-	// HTML5 mode
-	req = test.NewRequest(echo.GET, "/client", nil)
-	rec = test.NewResponseRecorder()
-	c = e.NewContext(req, rec)
-	static := StaticWithConfig(StaticConfig{
-		Root:  "../_fixture",
-		HTML5: true,
-	})
-	h = static(func(c echo.Context) error {
-		return echo.ErrNotFound
-	})
+	// File found
+	h = StaticWithConfig(config)(echo.NotFoundHandler)
+	c.SetParamValues("/images/walle.png")
 	if assert.NoError(t, h(c)) {
-		assert.Equal(t, http.StatusOK, rec.Status())
+		assert.Equal(t, http.StatusOK, rec.Code)
+		assert.Equal(t, rec.Header().Get(echo.HeaderContentLength), "219885")
+	}
+
+	// File not found
+	c.SetParamValues("/none")
+	rec.Body.Reset()
+	he := h(c).(*echo.HTTPError)
+	assert.Equal(t, http.StatusNotFound, he.Code)
+
+	// HTML5
+	c.SetParamValues("/random")
+	rec.Body.Reset()
+	config.HTML5 = true
+	static := StaticWithConfig(config)
+	h = static(echo.NotFoundHandler)
+	if assert.NoError(t, h(c)) {
+		assert.Equal(t, http.StatusOK, rec.Code)
+		assert.Contains(t, rec.Body.String(), "Echo")
 	}
 
 	// Browse
-	req = test.NewRequest(echo.GET, "/", nil)
-	rec = test.NewResponseRecorder()
-	c = e.NewContext(req, rec)
-	static = StaticWithConfig(StaticConfig{
-		Root:   "../_fixture/images",
-		Browse: true,
-	})
-	h = static(func(c echo.Context) error {
-		return echo.ErrNotFound
-	})
+	c.SetParamValues("/")
+	rec.Body.Reset()
+	config.Browse = true
+	static = StaticWithConfig(config)
+	h = static(echo.NotFoundHandler)
 	if assert.NoError(t, h(c)) {
-		assert.Contains(t, rec.Body.String(), "walle")
+		assert.Equal(t, http.StatusOK, rec.Code)
+		assert.Contains(t, rec.Body.String(), "images")
 	}
-
-	// Not found
-	req = test.NewRequest(echo.GET, "/not-found", nil)
-	rec = test.NewResponseRecorder()
-	c = e.NewContext(req, rec)
-	static = StaticWithConfig(StaticConfig{
-		Root: "../_fixture/images",
-	})
-	h = static(func(c echo.Context) error {
-		return echo.ErrNotFound
-	})
-	assert.Error(t, h(c))
 }

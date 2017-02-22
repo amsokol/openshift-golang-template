@@ -1,14 +1,17 @@
 package main
 
 import (
-	"log"
-	"net/http"
+	"context"
+
+	"os"
+	"os/signal"
+
 	"time"
 
+	"net/http"
+
 	"github.com/labstack/echo"
-	"github.com/labstack/echo/engine/standard"
-	"github.com/labstack/echo/middleware"
-	"github.com/tylerb/graceful"
+	"github.com/labstack/gommon/log"
 )
 
 func hello(c echo.Context) error {
@@ -16,21 +19,28 @@ func hello(c echo.Context) error {
 }
 
 func main() {
-	// Echo instance
+	// Setup
 	e := echo.New()
-
-	// Middleware
-	e.Use(middleware.Logger())
-	e.Use(middleware.Recover())
+	e.Logger.SetLevel(log.INFO)
 
 	// Routes
-	e.Get("/", hello)
+	e.GET("/", hello)
 
 	// Start server
-	port := "8080"
-	std := standard.New(":" + port)
-	std.SetHandler(e)
+	go func() {
+		if err := e.Start(":8080"); err != nil {
+			e.Logger.Info("shutting down the server")
+		}
+	}()
 
-	log.Printf("Starting app on port %+v\n", port)
-	graceful.ListenAndServe(std.Server, 1*time.Second)
+	// Wait for interrupt signal to gracefully shutdown the server with
+	// a timeout of 10 seconds.
+	quit := make(chan os.Signal)
+	signal.Notify(quit, os.Interrupt)
+	<-quit
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	if err := e.Shutdown(ctx); err != nil {
+		e.Logger.Fatal(err)
+	}
 }

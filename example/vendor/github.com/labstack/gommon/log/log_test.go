@@ -27,8 +27,8 @@ func test(l *Logger, t *testing.T) {
 	l.Error("error")
 	l.Errorf("error%s", "f")
 
-	assert.Contains(t, b.String(), "print\n")
-	assert.Contains(t, b.String(), "\nprintf\n")
+	assert.Contains(t, b.String(), "print")
+	assert.Contains(t, b.String(), "printf")
 	assert.NotContains(t, b.String(), "debug")
 	assert.NotContains(t, b.String(), "debugf")
 	assert.NotContains(t, b.String(), "info")
@@ -108,6 +108,15 @@ func TestJSON(t *testing.T) {
 	l.SetLevel(DEBUG)
 	l.Debugj(JSON{"name": "value"})
 	assert.Contains(t, b.String(), `"name":"value"`)
+}
+
+func TestStringWithQuotes(t *testing.T) {
+	l := New("test")
+	b := new(bytes.Buffer)
+	l.SetOutput(b)
+	l.SetLevel(DEBUG)
+	l.Debugf("Content-Type: %q", "")
+	assert.Contains(t, b.String(), `"message":"Content-Type: \"\""`)
 }
 
 func BenchmarkLog(b *testing.B) {

@@ -1,5 +1,7 @@
 package echo
 
+import "strings"
+
 type (
 	// Router is the registry of all registered routes for an `Echo` instance for
 	// request matching and URL path parameter parsing.
@@ -45,16 +47,16 @@ func NewRouter(e *Echo) *Router {
 		tree: &node{
 			methodHandler: new(methodHandler),
 		},
-		routes: make(map[string]Route),
+		routes: map[string]Route{},
 		echo:   e,
 	}
 }
 
 // Add registers a new route for method and path with matching handler.
-func (r *Router) Add(method, path string, h HandlerFunc, e *Echo) {
+func (r *Router) Add(method, path string, h HandlerFunc) {
 	// Validate path
 	if path == "" {
-		e.logger.Fatal("path cannot be empty")
+		panic("echo: path cannot be empty")
 	}
 	if path[0] != '/' {
 		path = "/" + path
@@ -66,7 +68,7 @@ func (r *Router) Add(method, path string, h HandlerFunc, e *Echo) {
 		if path[i] == ':' {
 			j := i + 1
 
-			r.insert(method, path[:i], nil, skind, "", nil, e)
+			r.insert(method, path[:i], nil, skind, "", nil)
 			for ; i < l && path[i] != '/'; i++ {
 			}
 
@@ -75,26 +77,26 @@ func (r *Router) Add(method, path string, h HandlerFunc, e *Echo) {
 			i, l = j, len(path)
 
 			if i == l {
-				r.insert(method, path[:i], h, pkind, ppath, pnames, e)
+				r.insert(method, path[:i], h, pkind, ppath, pnames)
 				return
 			}
-			r.insert(method, path[:i], nil, pkind, ppath, pnames, e)
+			r.insert(method, path[:i], nil, pkind, ppath, pnames)
 		} else if path[i] == '*' {
-			r.insert(method, path[:i], nil, skind, "", nil, e)
-			pnames = append(pnames, "_*")
-			r.insert(method, path[:i+1], h, akind, ppath, pnames, e)
+			r.insert(method, path[:i], nil, skind, "", nil)
+			pnames = append(pnames, "*")
+			r.insert(method, path[:i+1], h, akind, ppath, pnames)
 			return
 		}
 	}
 
-	r.insert(method, path, h, skind, ppath, pnames, e)
+	r.insert(method, path, h, skind, ppath, pnames)
 }
 
-func (r *Router) insert(method, path string, h HandlerFunc, t kind, ppath string, pnames []string, e *Echo) {
+func (r *Router) insert(method, path string, h HandlerFunc, t kind, ppath string, pnames []string) {
 	// Adjust max param
 	l := len(pnames)
-	if *e.maxParam < l {
-		*e.maxParam = l
+	if *r.echo.maxParam < l {
+		*r.echo.maxParam = l
 	}
 
 	cn := r.tree // Current node as root
@@ -170,7 +172,15 @@ func (r *Router) insert(method, path string, h HandlerFunc, t kind, ppath string
 			if h != nil {
 				cn.addHandler(method, h)
 				cn.ppath = ppath
-				cn.pnames = pnames
+				if len(cn.pnames) == 0 { // Issue #729
+					cn.pnames = pnames
+				}
+				for i, n := range pnames {
+					// Param name aliases
+					if i < len(cn.pnames) && !strings.Contains(cn.pnames[i], n) {
+						cn.pnames[i] += "," + n
+					}
+				}
 			}
 		}
 		return
@@ -272,13 +282,13 @@ func (n *node) findHandler(method string) HandlerFunc {
 func (n *node) checkMethodNotAllowed() HandlerFunc {
 	for _, m := range methods {
 		if h := n.findHandler(m); h != nil {
-			return methodNotAllowedHandler
+			return MethodNotAllowedHandler
 		}
 	}
-	return notFoundHandler
+	return NotFoundHandler
 }
 
-// Find lookup a handler registed for method and path. It also parses URL for path
+// Find lookup a handler registered for method and path. It also parses URL for path
 // parameters and load them into context.
 //
 // For performance:
@@ -287,6 +297,7 @@ func (n *node) checkMethodNotAllowed() HandlerFunc {
 // - Reset it `Context#Reset()`
 // - Return it `Echo#ReleaseContext()`.
 func (r *Router) Find(method, path string, context Context) {
+	context.SetPath(path)
 	cn := r.tree // Current node as root
 
 	var (
@@ -343,7 +354,7 @@ func (r *Router) Find(method, path string, context Context) {
 		// Static node
 		if c = cn.findChild(search[0], skind); c != nil {
 			// Save next
-			if cn.label == '/' {
+			if cn.prefix[len(cn.prefix)-1] == '/' { // Issue #623
 				nk = pkind
 				nn = cn
 				ns = search
@@ -361,7 +372,7 @@ func (r *Router) Find(method, path string, context Context) {
 			}
 
 			// Save next
-			if cn.label == '/' {
+			if cn.prefix[len(cn.prefix)-1] == '/' { // Issue #623
 				nk = akind
 				nn = cn
 				ns = search
