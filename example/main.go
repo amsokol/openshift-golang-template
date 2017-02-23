@@ -16,10 +16,17 @@ import (
 )
 
 func hello(c echo.Context) error {
-	host, _ := os.Hostname()
+	host, err := os.Hostname()
+	if err != nil {
+		host = err.Error()
+	}
 	return c.String(http.StatusOK, fmt.Sprintf("Hello World from server %s! Now is %s",
 		host,
 		time.Now().String()))
+}
+
+func healthz(c echo.Context) error {
+	return c.String(http.StatusOK, "I'm OK!")
 }
 
 func main() {
@@ -29,6 +36,7 @@ func main() {
 
 	// Routes
 	e.GET("/", hello)
+	e.GET("/healthz", healthz)
 
 	// Start server
 	go func() {
