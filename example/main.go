@@ -26,13 +26,14 @@ func hello(c echo.Context) error {
 }
 
 func healthz(c echo.Context) error {
+	c.Logger().Debug("Response for health check: I'm OK!")
 	return c.String(http.StatusOK, "I'm OK!")
 }
 
 func main() {
 	// Setup
 	e := echo.New()
-	e.Logger.SetLevel(log.INFO)
+	e.Logger.SetLevel(log.DEBUG)
 
 	// Routes
 	e.GET("/", hello)
