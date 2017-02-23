@@ -20,9 +20,23 @@ if [ "$(ls /tmp/artifacts/ 2>/dev/null)" ]; then
   mv /tmp/artifacts/. ./
 fi
 
-echo "Root package is \"$ROOT\""
+echo "---> Сlarify the root package for go application"
+if [[ -n "${ROOT/[ ]*\n/}" ]]
+then
+	echo "Root package is set to \"$ROOT\""
+    ROOT_PACKAGE=$ROOT
+else
+	ROOT_PACKAGE=$(echo "$SOURCE_REPOSITORY_URL" | sed -re "s/(https:\/\/|git@)([^?]+)\.git/\2/g" | sed -re "s/:/\//g")
+	if [[ -n "${CONTEXT_DIR/[ ]*\n/}" ]]
+	then
+		ROOT_PACKAGE="$ROOT_PACKAGE/$CONTEXT_DIR"
+		echo "CONTEXT_DIR is \"$CONTEXT_DIR\", so root package is \"$ROOT_PACKAGE\""
+	else
+		echo "CONTEXT_DIR is empty, so root package is \"$ROOT_PACKAGE\""
+	fi
+fi
 
-SOURCE_CODE="$GOPATH/src/$ROOT"
+SOURCE_CODE="$GOPATH/src/$ROOT_PACKAGE"
 echo "---> Installing application source in folder \"$SOURCE_CODE\""
 mkdir -p $SOURCE_CODE
 cd $SOURCE_CODE
@@ -31,5 +45,6 @@ cp -Rf /tmp/src/. ./
 # echo "---> Downloading dependencies..."
 # go get -v ./...
 
+mkdir -p $GOPATH/bin
 echo "---> Building application from source"
-go build -o goapplication4run
+go build -o $GOPATH/bin/goapplication4run

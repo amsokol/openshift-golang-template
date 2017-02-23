@@ -7,10 +7,4 @@
 #	https://github.com/openshift/source-to-image/blob/master/docs/builder_image.md
 #
 
-echo "Root package is \"$ROOT\""
-
-SOURCE_CODE="$GOPATH/src/$ROOT"
-echo "---> Application is built in folder \"$SOURCE_CODE\""
-cd $SOURCE_CODE
-
-exec ./goapplication4run
+exec $GOPATH/bin/goapplication4run
