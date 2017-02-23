@@ -8,14 +8,63 @@ import (
 
 	"time"
 
+	"net"
 	"net/http"
 
+	"fmt"
 	"github.com/labstack/echo"
 	"github.com/labstack/gommon/log"
 )
 
 func hello(c echo.Context) error {
-	return c.String(http.StatusOK, "Hello, World!\n")
+	ip, _ := getMyInterfaceAddr()
+	return c.String(http.StatusOK, fmt.Sprintf("Hello World from server with IP=%s! Now is %s",
+		ip.String(),
+		time.Now().String()))
+}
+
+func getMyInterfaceAddr() (net.IP, error) {
+    ifaces, err := net.Interfaces()
+    if err != nil {
+        return nil, err
+    }
+    addresses := []net.IP{}
+    for _, iface := range ifaces {
+
+        if iface.Flags&net.FlagUp == 0 {
+            continue // interface down
+        }
+        if iface.Flags&net.FlagLoopback != 0 {
+            continue // loopback interface
+        }
+        addrs, err := iface.Addrs()
+        if err != nil {
+            continue
+        }
+
+        for _, addr := range addrs {
+            var ip net.IP
+            switch v := addr.(type) {
+            case *net.IPNet:
+                ip = v.IP
+            case *net.IPAddr:
+                ip = v.IP
+            }
+            if ip == nil || ip.IsLoopback() {
+                continue
+            }
+            ip = ip.To4()
+            if ip == nil {
+                continue // not an ipv4 address
+            }
+            addresses = append(addresses, ip)
+        }
+    }
+    if len(addresses) == 0 {
+        return nil, fmt.Errorf("no address Found, net.InterfaceAddrs: %v", addresses)
+    }
+    //only need first
+    return addresses[0], nil
 }
 
 func main() {
