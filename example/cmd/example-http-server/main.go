@@ -1,34 +1,15 @@
+// Package main is command line HTTP server
 package main
 
 import (
 	"context"
-
 	"os"
 	"os/signal"
-
 	"time"
 
-	"net/http"
-
-	"fmt"
 	"github.com/labstack/echo"
 	"github.com/labstack/gommon/log"
 )
-
-func hello(c echo.Context) error {
-	host, err := os.Hostname()
-	if err != nil {
-		host = err.Error()
-	}
-	return c.String(http.StatusOK, fmt.Sprintf("Hello World from server %s! Now is %s",
-		host,
-		time.Now().String()))
-}
-
-func healthz(c echo.Context) error {
-	c.Logger().Debug("Response for health check: I'm OK!")
-	return c.String(http.StatusOK, "I'm OK!")
-}
 
 func main() {
 	// Setup

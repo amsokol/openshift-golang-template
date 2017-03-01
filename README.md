@@ -6,12 +6,13 @@
 # oc new-project project1
 # oc create -f .\openshift-golang-template.yaml
 ```
+Context directory is "/example/cmd/example-http-server"
 
 ### Note: select advanced options and set the following:
 1. Set context dir '/example'
 2. Set 'ROOT' environment variable (for build and run) as root package. Example:
     * if git URL is "https://github.com/amsokol/openshift-golang-template.git"
-    * and context directory is "/example"
+    * and context directory is "/example/cmd/example-http-server"
     * than set ROOT environment variable to "github.com/amsokol/openshift-golang-template/example"
 
 ## Helper: how to export template from OpenShift to be example:

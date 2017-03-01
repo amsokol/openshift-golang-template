@@ -3,7 +3,9 @@ package middleware
 import (
 	"fmt"
 	"os"
+	"path"
 	"path/filepath"
+	"strings"
 
 	"github.com/labstack/echo"
 )
@@ -53,6 +55,9 @@ func Static(root string) echo.MiddlewareFunc {
 // See `Static()`.
 func StaticWithConfig(config StaticConfig) echo.MiddlewareFunc {
 	// Defaults
+	if config.Root == "" {
+		config.Root = "." // For security we want to restrict to CWD.
+	}
 	if config.Skipper == nil {
 		config.Skipper = DefaultStaticConfig.Skipper
 	}
@@ -62,16 +67,19 @@ func StaticWithConfig(config StaticConfig) echo.MiddlewareFunc {
 
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
-			p := c.Param("*")
-			name := filepath.Join(config.Root, p)
-			fi, err := os.Stat(name)
+			p := c.Request().URL.Path
+			if strings.HasSuffix(c.Path(), "*") { // When serving from a group, e.g. `/static*`.
+				p = c.Param("*")
+			}
+			name := filepath.Join(config.Root, path.Clean("/"+p)) // "/"+ for security
 
+			fi, err := os.Stat(name)
 			if err != nil {
 				if os.IsNotExist(err) {
 					if config.HTML5 {
 						return c.File(filepath.Join(config.Root, config.Index))
 					}
-					return echo.ErrNotFound
+					return next(c)
 				}
 				return err
 			}
@@ -80,8 +88,17 @@ func StaticWithConfig(config StaticConfig) echo.MiddlewareFunc {
 				if config.Browse {
 					return listDir(name, c.Response())
 				}
-				return c.File(filepath.Join(name, config.Index))
+				name = filepath.Join(name, config.Index)
+				fi, err = os.Stat(name)
+				if err != nil {
+					if os.IsNotExist(err) {
+						return next(c)
+					}
+					return err
+				}
+				return c.File(name)
 			}
+
 			return c.File(name)
 		}
 	}
