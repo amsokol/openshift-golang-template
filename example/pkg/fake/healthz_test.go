@@ -8,7 +8,7 @@ func TestHealthz(t *testing.T) {
 		want    string
 		wantErr bool
 	}{
-		{ "test #1", "I'm OK!", false},
+		{"test #1", "I'm OK!", false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

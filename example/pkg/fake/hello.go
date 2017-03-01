@@ -9,7 +9,7 @@ import (
 
 // Hello is simple method
 // It returns greetings contains server hostname and date/time
-func Hello() (string) {
+func Hello() string {
 	host, err := os.Hostname()
 	if err != nil {
 		host = err.Error()
