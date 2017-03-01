@@ -10,7 +10,7 @@ Context directory is "/example/cmd/example-http-server"
 
 ### Note: select advanced options and set the following:
 1. Set context dir "/example"
-2. Set GOPROJECT_ROOT and GOPROJECT_CMD environment variables (for build and run phases):
+2. Set GOPROJECT_ROOT and GOPROJECT_CMD environment variables by corresponding values in "Build Configuration" section, "Environment Variables (Build and Runtime)" list:
     * if, for example, git URL is "https://github.com/amsokol/openshift-golang-template.git"
     * and context directory is "/example"
     * and "main" package is in "/example/cmd/example-http-server"
