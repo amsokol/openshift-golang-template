@@ -21,10 +21,10 @@ if [ "$(ls /tmp/artifacts/ 2>/dev/null)" ]; then
 fi
 
 echo "---> Сlarify the root package for go application"
-if [[ -n "${ROOT/[ ]*\n/}" ]]
+if [[ -n "${GOPROJECT_ROOT/[ ]*\n/}" ]]
 then
-	echo "Root package is set to \"$ROOT\""
-    ROOT_PACKAGE=$ROOT
+	echo "Root package is set to \"$GOPROJECT_ROOT\""
+    ROOT_PACKAGE=$GOPROJECT_ROOT
 else
 	ROOT_PACKAGE=$(echo "$SOURCE_REPOSITORY_URL" | sed -re "s/(https:\/\/|git@)([^?]+)\.git/\2/g" | sed -re "s/:/\//g")
 	if [[ -n "${CONTEXT_DIR/[ ]*\n/}" ]]
@@ -47,4 +47,5 @@ cp -Rf /tmp/src/. ./
 
 mkdir -p $GOPATH/bin
 echo "---> Building application from source"
+cd ./$GOPROJECT_CMD
 go build -o $GOPATH/bin/goapplication4run

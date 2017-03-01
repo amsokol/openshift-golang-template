@@ -12,8 +12,10 @@ Context directory is "/example/cmd/example-http-server"
 1. Set context dir '/example'
 2. Set 'ROOT' environment variable (for build and run) as root package. Example:
     * if git URL is "https://github.com/amsokol/openshift-golang-template.git"
-    * and context directory is "/example/cmd/example-http-server"
-    * than set ROOT environment variable to "github.com/amsokol/openshift-golang-template/example"
+    * and context directory is "/example"
+    * and "main" package is in "/example/cmd/example-http-server"
+    * than set GOPROJECT_ROOT environment variable to "github.com/amsokol/openshift-golang-template/example"
+    * at last set GOPROJECT_CMD environment variable to "cmd/example-http-server"
 
 ## Helper: how to export template from OpenShift to be example:
 ```
