@@ -28,4 +28,4 @@ spec:
       sampleRepo: https://github.com/amsokol/openshift-golang-template.git
     from:
       kind: DockerImage
-      name: docker.io/amsokol/golang-openshift:1.8.0-3
+      name: docker.io/amsokol/golang-openshift:1.8.0-4
