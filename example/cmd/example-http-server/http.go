@@ -4,7 +4,7 @@ package main
 import (
 	"net/http"
 
-	"github.com/amsokol/openshift-golang-template/example/pkg/fake"
+	"github.com/amsokol/openshift-golang-template/example/fake"
 	"github.com/labstack/echo"
 )
 
