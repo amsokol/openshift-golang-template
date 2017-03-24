@@ -2,8 +2,8 @@
 package fake
 
 import (
-	"fmt"
 	"os"
+	"strings"
 	"time"
 )
 
@@ -14,7 +14,6 @@ func Hello() string {
 	if err != nil {
 		host = err.Error()
 	}
-	return fmt.Sprintf("Hello World from server %s! Now is %s",
-		host,
-		time.Now().String())
+	s := []string{"Hello World from server ", host, "! Now is ", time.Now().String()}
+	return strings.Join(s, "")
 }
