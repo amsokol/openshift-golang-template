@@ -1,6 +1,6 @@
 #!/bin/bash -e
 #
-# S2I assemble script for the 'amsokol/golang-openshift:1.8.0' image.
+# S2I assemble script for the 'amsokol/golang-openshift:1.8.1-1' image.
 # The 'assemble' script builds your application source so that it is ready to run.
 #
 # For more information refer to the documentation:
