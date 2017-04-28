@@ -1,6 +1,6 @@
 #!/bin/bash -e
 #
-# S2I assemble script for the 'amsokol/golang-openshift:1.8.1-1' image.
+# S2I assemble script for the 'amsokol/golang-openshift:1.8.1-2' image.
 # The 'assemble' script builds your application source so that it is ready to run.
 #
 # For more information refer to the documentation:
@@ -42,10 +42,20 @@ mkdir -p $SOURCE_CODE
 cd $SOURCE_CODE
 cp -Rf /tmp/src/. ./
 
+mkdir -p $GOPATH/bin
+
+if [[ -n "${USE_GOLANG_DEP/[ ]*\n/}" ]]
+then
+	echo "---> Using golang dep manager (dep is a prototype dependency management tool)"
+	echo "---> Downloading golang dep manager from github.com/golang/dep ..."
+	go get -u github.com/golang/dep/...
+  echo "---> Downloading dependencies..."
+	dep ensure
+fi
+
 # echo "---> Downloading dependencies..."
 # go get -v ./...
 
-mkdir -p $GOPATH/bin
 echo "---> Building application from source"
 cd ./$GOPROJECT_CMD
 go build -o $GOPATH/bin/goapplication4run

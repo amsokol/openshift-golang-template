@@ -24,8 +24,8 @@ spec:
         Build and run Go 1.8 applications on CentOS 7.
         
         IMPORTANT: environment variables GOPROJECT_ROOT and GOPROJECT_CMD must be set by corresponding values in "Build Configuration" section, "Environment Variables (Build and Runtime)" list.
-        For example, git URL is "https://github.com/amsokol/openshift-golang-template.git", context directory is "/example" and "main" (main.go) package is located in "/example/cmd/example-http-server".
-        In this case set GOPROJECT_ROOT=github.com/amsokol/openshift-golang-template/example and GOPROJECT_CMD=cmd/example-http-server
+        For example, git URL is "https://github.com/amsokol/openshift-golang-template.git", context directory is "/example-golang-dep" and "main" (main.go) package is located in "/example-golang-dep/cmd/server".
+        In this case set GOPROJECT_ROOT=github.com/amsokol/openshift-golang-template/example-golang-dep and GOPROJECT_CMD=cmd/server
       iconClass: icon-go-gopher
       tags: builder,golang
       supports: golang:1.8,golang
@@ -33,4 +33,4 @@ spec:
       sampleRepo: https://github.com/amsokol/openshift-golang-template.git
     from:
       kind: DockerImage
-      name: docker.io/amsokol/golang-openshift:1.8.1-1
+      name: docker.io/amsokol/golang-openshift:1.8.1-2

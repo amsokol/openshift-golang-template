@@ -1,0 +1,7 @@
+memo = "ac7e3a53cb1eadfbd7404076b0bbf027f2e781ca08c78651e546cd3a382a13f9"
+
+[[projects]]
+  name = "github.com/pressly/chi"
+  packages = ["."]
+  revision = "e6033ea75479391a4bce3918fc119cad31e1cb30"
+  version = "v2.1.0"

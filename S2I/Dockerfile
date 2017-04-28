@@ -40,6 +40,7 @@ ENV GOPATH /opt/app-root
 
 # Set the default port for applications built using this image
 EXPOSE 8080
+ENV PORT 8080
 
 # Set the default CMD for the image
 CMD ["usage"]
