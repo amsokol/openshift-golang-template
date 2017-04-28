@@ -24,3 +24,4 @@ _testmain.go
 *.prof
 .kube/
 /example-golang-dep/vendor
+/example-golang-dep/Gopkg.lock
