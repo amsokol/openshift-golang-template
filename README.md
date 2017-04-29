@@ -3,7 +3,7 @@ It supports:
 - Golang [dep manager](https://github.com/golang/dep) (dep is a prototype dependency management tool) - [/example-golang-dep](https://github.com/amsokol/openshift-golang-template/tree/master/example-golang-dep)
 - Traditional `go get` - [/example](https://github.com/amsokol/openshift-golang-template/tree/master/example)
 
-Sample data for try golang template:
+## Sample data to try golang template:
 | Data                                 | Value                                                    |
 |--------------------------------------|----------------------------------------------------------|
 | Go                                   | Go v1.8.1                                                |
