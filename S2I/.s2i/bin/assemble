@@ -44,13 +44,15 @@ cp -Rf /tmp/src/. ./
 
 mkdir -p $GOPATH/bin
 
-if [[ -n "${USE_GOLANG_DEP/[ ]*\n/}" ]]
+if [ -f "./Gopkg.toml" ]
 then
 	echo "---> Using golang dep manager (dep is a prototype dependency management tool)"
 	echo "---> Downloading golang dep manager from github.com/golang/dep ..."
 	go get -u github.com/golang/dep/...
   echo "---> Downloading dependencies..."
 	dep ensure
+else
+	echo "---> Do not use dependency manager"
 fi
 
 # echo "---> Downloading dependencies..."
