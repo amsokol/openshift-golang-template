@@ -49,11 +49,11 @@ then
 	echo "---> Using golang dep manager (dep is a prototype dependency management tool)"
 	echo "---> Downloading golang dep manager from github.com/golang/dep ..."
 	go get -u github.com/golang/dep/...
-  echo "---> Downloading dependencies..."
+	echo "---> Downloading dependencies..."
 	dep ensure
 else
 	echo "---> Do not use dependency manager - run 'go get'"
-  echo "---> Downloading dependencies..."
+	echo "---> Downloading dependencies..."
 	go get -v ./...
 fi
 
