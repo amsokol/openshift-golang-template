@@ -4,12 +4,12 @@
 ```
 # oc login --insecure-skip-tls-verify -u <username> https://openshift.example.com:8443
 # oc new-project project1
-# oc create -f .\openshift-golang-template.yaml
+# oc create -f ./openshift-golang-template.yaml
 ```
 Context directory is "/example-golang-dep/cmd/server"
 
 ### Note: select advanced options and set the following:
-1. Set context dir "/example"
+1. Set context dir "/example-golang-dep"
 2. Set GOPROJECT_ROOT and GOPROJECT_CMD environment variables by corresponding values in "Build Configuration" section, "Environment Variables (Build and Runtime)" list:
     * if, for example, git URL is "https://github.com/amsokol/openshift-golang-template.git"
     * and context directory is "/example-golang-dep"
