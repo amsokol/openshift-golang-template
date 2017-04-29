@@ -52,11 +52,10 @@ then
   echo "---> Downloading dependencies..."
 	dep ensure
 else
-	echo "---> Do not use dependency manager"
+	echo "---> Do not use dependency manager - run 'go get'"
+  echo "---> Downloading dependencies..."
+	go get -v ./...
 fi
-
-# echo "---> Downloading dependencies..."
-# go get -v ./...
 
 echo "---> Building application from source"
 cd ./$GOPROJECT_CMD
