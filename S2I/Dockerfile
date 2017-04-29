@@ -27,6 +27,7 @@ ENV PATH /usr/local/go/bin:$PATH
 
 # TODO: Copy the S2I scripts to /usr/libexec/s2i, since openshift/base-centos7 image sets io.openshift.s2i.scripts-url label that way, or update that label
 COPY ./.s2i/bin/ $STI_SCRIPTS_PATH
+RUN chmod -R a+x $STI_SCRIPTS_PATH
 ENV PATH $STI_SCRIPTS_PATH:$PATH
 
 # Drop the root user and make the content of /opt/app-root owned by user 1001
