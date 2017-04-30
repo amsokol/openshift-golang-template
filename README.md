@@ -69,7 +69,7 @@ So GOPROJECT_CMD is set to `cmd/server`
 
 2. Open `project1` project
 
-3. Click `Appications -> Deployments`
+3. Click `Applications -> Deployments`
 
 4. Click `golang1` in the list
 
