@@ -19,7 +19,8 @@ func Start(port string) error {
 
 	r := chi.NewRouter()
 	r.Get("/", hello)
-	r.Get("/healthz", healthz)
+	r.Get("/healthz/live", live)
+	r.Get("/healthz/ready", ready)
 
 	h := &http.Server{Addr: ":" + port, Handler: r}
 

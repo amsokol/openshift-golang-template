@@ -64,7 +64,7 @@ So GOPROJECT_CMD is set to `cmd/server`
 
 14. Leave other options with default values and click `Create` and wait while pod is created
 
-## [Optional] How to add health check
+## [Optional] How to add health (liveness and readiness) check
 1. Login to OpenShift console using browser (eg https://openshift.example.com:8443) with Developer account
 
 2. Open `project1` project
@@ -79,9 +79,13 @@ So GOPROJECT_CMD is set to `cmd/server`
 
 7. Click `Add Readiness Probe`
 
-8. Set `Path` to '/healthz' and leave other options with default values
+8. Set `Path` to '/healthz/ready' and leave other options with default values
 
-9. Click `Save` and wait while pod is created
+9. Click `Add Liveness Probe`
+
+10. Set `Path` to '/healthz/live' and leave other options with default values
+
+11. Click `Save` and wait while pod is created
 
 ## Helper #1 - you can try golang template using S2I:
 ```
