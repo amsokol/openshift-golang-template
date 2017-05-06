@@ -13,7 +13,7 @@ It supports:
 | Folder with main.go to build and run | /example-golang-dep/cmd/server                           |
 
 ## How to:
-1. Login to developer account to OpenShift:
+1. Login with Developer account to OpenShift:
 ```
 # oc login --insecure-skip-tls-verify -u <username> https://openshift.example.com:8443
 ```
@@ -64,7 +64,7 @@ So GOPROJECT_CMD is set to `cmd/server`
 
 14. Leave other options with default values and click `Create` and wait while pod is created
 
-## [Optional] How to add health (liveness and readiness) check
+## [Optional] How to add health (liveness and readiness) checks
 1. Login to OpenShift console using browser (eg https://openshift.example.com:8443) with Developer account
 
 2. Open `project1` project
