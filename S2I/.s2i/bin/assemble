@@ -30,9 +30,9 @@ else
 	if [[ -n "${SOURCE_CONTEXT_DIR/[ ]*\n/}" ]]
 	then
 		ROOT_PACKAGE="$ROOT_PACKAGE/$SOURCE_CONTEXT_DIR"
-		echo "CONTEXT_DIR is \"$SOURCE_CONTEXT_DIR\", so root package is \"$ROOT_PACKAGE\""
+		echo "SOURCE_CONTEXT_DIR is \"$SOURCE_CONTEXT_DIR\", so root package is \"$ROOT_PACKAGE\""
 	else
-		echo "CONTEXT_DIR is empty, so root package is \"$ROOT_PACKAGE\""
+		echo "SOURCE_CONTEXT_DIR is empty, so root package is \"$ROOT_PACKAGE\""
 	fi
 fi
 
