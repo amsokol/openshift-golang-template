@@ -89,7 +89,7 @@ So GOPROJECT_CMD is set to `cmd/server`
 
 ## Helper #1 - you can try golang template using S2I:
 ```
-s2i build https://github.com/amsokol/openshift-golang-template.git amsokol/golang-openshift:1.8.1-2 golang1 -e GOPROJECT_ROOT=github.com/amsokol/openshift-golang-template/example-golang-dep -e GOPROJECT_CMD=cmd/server --context-dir /example-golang-dep
+s2i build https://github.com/amsokol/openshift-golang-template.git amsokol/golang-openshift:1.8.1-4 golang1 -e GOPROJECT_ROOT=github.com/amsokol/openshift-golang-template/example-golang-dep -e GOPROJECT_CMD=cmd/server --context-dir /example-golang-dep
 ```
 
 ## Helper #2 - how to export/edit template from OpenShift:
