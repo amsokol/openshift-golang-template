@@ -21,13 +21,19 @@ if [ "$(ls /tmp/artifacts/ 2>/dev/null)" ]; then
 fi
 
 echo "---> Сlarify the root package for go application"
-ROOT_PACKAGE=$(echo "$SOURCE_REPOSITORY" | sed -re "s/(https:\/\/|git@)([^?]+)\.git/\2/g" | sed -re "s/:/\//g")
-if [[ -n "${SOURCE_CONTEXT_DIR/[ ]*\n/}" ]]
+if [[ -n "${GOPROJECT_ROOT/[ ]*\n/}" ]]
 then
-	ROOT_PACKAGE="$ROOT_PACKAGE/$SOURCE_CONTEXT_DIR"
-	echo "SOURCE_CONTEXT_DIR is \"$SOURCE_CONTEXT_DIR\", so root package is \"$ROOT_PACKAGE\""
+	echo "Root package is set to \"$GOPROJECT_ROOT\""
+    ROOT_PACKAGE=$GOPROJECT_ROOT
 else
-	echo "SOURCE_CONTEXT_DIR is empty, so root package is \"$ROOT_PACKAGE\""
+	ROOT_PACKAGE=$(echo "$SOURCE_REPOSITORY_URL" | sed -re "s/(https:\/\/|git@)([^?]+)\.git/\2/g" | sed -re "s/:/\//g")
+	if [[ -n "${CONTEXT_DIR/[ ]*\n/}" ]]
+	then
+		ROOT_PACKAGE="$ROOT_PACKAGE/$CONTEXT_DIR"
+		echo "CONTEXT_DIR is \"$CONTEXT_DIR\", so root package is \"$ROOT_PACKAGE\""
+	else
+		echo "CONTEXT_DIR is empty, so root package is \"$ROOT_PACKAGE\""
+	fi
 fi
 
 SOURCE_CODE="$GOPATH/src/$ROOT_PACKAGE"
