@@ -1,6 +1,6 @@
 #!/bin/bash -e
 #
-# S2I assemble script for the 'amsokol/golang-openshift:1.8.1-4' image.
+# S2I assemble script for the 'amsokol/golang-openshift:1.8.1-5' image.
 # The 'assemble' script builds your application source so that it is ready to run.
 #
 # For more information refer to the documentation:
@@ -40,7 +40,13 @@ SOURCE_CODE="$GOPATH/src/$ROOT_PACKAGE"
 echo "---> Installing application source in folder \"$SOURCE_CODE\""
 mkdir -p $SOURCE_CODE
 cd $SOURCE_CODE
-cp -Rf /tmp/src/. ./
+if test -d /tmp/src
+then
+	cp -Rf /tmp/src/. ./
+else
+	# for backwards compatibility
+	cp -Rf /tmp/s2i*/upload/src/. ./
+fi
 
 mkdir -p $GOPATH/bin
 
