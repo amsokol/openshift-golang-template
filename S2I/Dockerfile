@@ -9,9 +9,9 @@ ENV GOLANG_OPENSHIFT_BUILDER_VERSION 1.0
 
 # Set labels used in OpenShift to describe the builder image
 LABEL io.k8s.description="Platform for building golang web application" \
-      io.k8s.display-name="builder 1.8.1" \
+      io.k8s.display-name="builder 1.8.2" \
       io.openshift.expose-services="8080:http" \
-      io.openshift.tags="builder,1.8.1,golang"
+      io.openshift.tags="builder,1.8.2,golang"
 
 ENV GOLANG_VERSION 1.8.2
 ENV GOLANG_DOWNLOAD_URL https://golang.org/dl/go$GOLANG_VERSION.linux-amd64.tar.gz

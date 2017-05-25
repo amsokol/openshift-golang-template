@@ -6,7 +6,7 @@ It supports:
 ## Sample data to try golang template:
 | Data                                 | Value                                                    |
 |--------------------------------------|----------------------------------------------------------|
-| Go                                   | Go v1.8.1                                                |
+| Go                                   | Go v1.8.2                                                |
 | OpenShift                            | OpenShift Origin v1.5.0                                  |
 | Git repository                       | https://github.com/amsokol/openshift-golang-template.git |
 | Context directory                    | /example-golang-dep                                      |
