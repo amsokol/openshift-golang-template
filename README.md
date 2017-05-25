@@ -6,7 +6,7 @@ It supports:
 ## Sample data to try golang template:
 | Data                                 | Value                                                    |
 |--------------------------------------|----------------------------------------------------------|
-| Go                                   | Go v1.8.2                                                |
+| Go                                   | Go v1.8                                                  |
 | OpenShift                            | OpenShift Origin v1.5.0                                  |
 | Git repository                       | https://github.com/amsokol/openshift-golang-template.git |
 | Context directory                    | /example-golang-dep                                      |
@@ -39,7 +39,7 @@ It supports:
 
 7. Click `Add to Project` and select `Go`
 
-8. Select `1.8 - latest` from drop down list and click `Select`
+8. Select `1.8.2 - latest` from drop down list and click `Select`
 
 9. Set `Name` to `golang1`
 
