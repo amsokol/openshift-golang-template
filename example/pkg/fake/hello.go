@@ -3,6 +3,7 @@ package fake
 
 import (
 	"os"
+	"runtime"
 	"strings"
 	"time"
 )
@@ -14,6 +15,8 @@ func Hello() string {
 	if err != nil {
 		host = err.Error()
 	}
-	s := []string{"Hello World from server ", host, "! Now is ", time.Now().String()}
+	s := []string{"Hello World from server ", host, "! ",
+		"Now is ", time.Now().String(), "! ",
+		"Go version ", runtime.Version(), " ", runtime.GOOS, "-", runtime.GOARCH, "!"}
 	return strings.Join(s, "")
 }
