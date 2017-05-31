@@ -1,9 +1,9 @@
 # Golang template for OpenShift v3 (version 1.4 and higher)
 It supports:
 - Golang [dep manager](https://github.com/golang/dep) (dep is a prototype dependency management tool) - [/example-golang-dep](https://github.com/amsokol/openshift-golang-template/tree/master/example-golang-dep)
-- [glide](https://github.com/Masterminds/glide) manager - [/example-glide](https://github.com/amsokol/openshift-golang-template/tree/golang-1.8.1/example-glide)
-- [godep](https://github.com/tools/godep) manager - [/example-godep](https://github.com/amsokol/openshift-golang-template/tree/golang-1.8.1/example-godep)
-- [govendor](https://github.com/kardianos/govendor) manager - [/example-govendor](https://github.com/amsokol/openshift-golang-template/tree/golang-1.8.1/example-govendor)
+- [glide](https://github.com/Masterminds/glide) manager - [/example-glide](https://github.com/amsokol/openshift-golang-template/tree/golang-1.8.2/example-glide)
+- [godep](https://github.com/tools/godep) manager - [/example-godep](https://github.com/amsokol/openshift-golang-template/tree/golang-1.8.2/example-godep)
+- [govendor](https://github.com/kardianos/govendor) manager - [/example-govendor](https://github.com/amsokol/openshift-golang-template/tree/golang-1.8.2/example-govendor)
 - Traditional `go get` - [/example](https://github.com/amsokol/openshift-golang-template/tree/master/example)
 
 ## Sample data to try golang template:
@@ -93,7 +93,7 @@ So GOPROJECT_CMD is set to `cmd/server`
 
 ## Helper #1 - you can try golang template using S2I:
 ```
-s2i build https://github.com/amsokol/openshift-golang-template.git amsokol/golang-openshift:1.8.1-6 golang1 -e GOPROJECT_ROOT=github.com/amsokol/openshift-golang-template/example-golang-dep -e GOPROJECT_CMD=cmd/server --context-dir /example-golang-dep
+s2i build https://github.com/amsokol/openshift-golang-template.git amsokol/golang-openshift:1.8.2-2 golang1 -e GOPROJECT_ROOT=github.com/amsokol/openshift-golang-template/example-golang-dep -e GOPROJECT_CMD=cmd/server --context-dir /example-golang-dep
 ```
 
 ## Helper #2 - how to export/edit template from OpenShift:
