@@ -1,0 +1,6 @@
+hash: 2ef5f132d3f66b2297c7af2c4c7e14285d276652622bcf4ae7bde9453321e360
+updated: 2017-05-31T10:21:18.0935285+03:00
+imports:
+- name: github.com/pressly/chi
+  version: e6033ea75479391a4bce3918fc119cad31e1cb30
+testImports: []
