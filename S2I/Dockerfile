@@ -1,4 +1,4 @@
-# amsokol/golang-openshift:1.8.3-1
+# amsokol/golang-openshift:1.8.3
 FROM openshift/base-centos7
 
 # Maintainer name in the image metadata

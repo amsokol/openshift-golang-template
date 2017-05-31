@@ -25,3 +25,6 @@ _testmain.go
 .kube/
 /example-golang-dep/vendor
 /example-golang-dep/Gopkg.lock
+/example-godep/vendor
+/example-glide/vendor
+/example-glide/glide.lock

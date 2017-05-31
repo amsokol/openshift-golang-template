@@ -1,0 +1,15 @@
+{
+	"ImportPath": "github.com/amsokol/openshift-golang-template/example-godep",
+	"GoVersion": "go1.8",
+	"GodepVersion": "v79",
+	"Packages": [
+		"./..."
+	],
+	"Deps": [
+		{
+			"ImportPath": "github.com/pressly/chi",
+			"Comment": "v2.1.0-8-g35ec20b",
+			"Rev": "35ec20b432d9c9d57c5da99623ebffd172433da5"
+		}
+	]
+}

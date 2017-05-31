@@ -33,7 +33,7 @@ spec:
       sampleRepo: https://github.com/amsokol/openshift-golang-template.git
     from:
       kind: DockerImage
-      name: docker.io/amsokol/golang-openshift:1.8.1-5
+      name: docker.io/amsokol/golang-openshift:1.8.1-6
   - name: '1.8.2'
     annotations:
       openshift.io/display-name: Golang 1.8.2
@@ -50,7 +50,7 @@ spec:
       sampleRepo: https://github.com/amsokol/openshift-golang-template.git
     from:
       kind: DockerImage
-      name: docker.io/amsokol/golang-openshift:1.8.2-1
+      name: docker.io/amsokol/golang-openshift:1.8.2-2
   - name: '1.8.3'
     annotations:
       openshift.io/display-name: Golang 1.8.3
@@ -67,4 +67,4 @@ spec:
       sampleRepo: https://github.com/amsokol/openshift-golang-template.git
     from:
       kind: DockerImage
-      name: docker.io/amsokol/golang-openshift:1.8.3-1
+      name: docker.io/amsokol/golang-openshift:1.8.3-2
