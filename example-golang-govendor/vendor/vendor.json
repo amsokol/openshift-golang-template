@@ -1,0 +1,15 @@
+{
+	"comment": "",
+	"ignore": "test",
+	"package": [
+		{
+			"checksumSHA1": "N+jpK3LNT+lFjGuBIw9RLOMnQx0=",
+			"path": "github.com/pressly/chi",
+			"revision": "e6033ea75479391a4bce3918fc119cad31e1cb30",
+			"revisionTime": "2017-03-30T18:40:54Z",
+			"version": "v2",
+			"versionExact": "v2.1.0"
+		}
+	],
+	"rootPath": "github.com/amsokol/openshift-golang-template/example-golang-govendor"
+}
