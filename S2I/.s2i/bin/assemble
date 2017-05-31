@@ -1,6 +1,6 @@
 #!/bin/bash -e
 #
-# S2I assemble script for the 'amsokol/golang-openshift:1.8.1-5' image.
+# S2I assemble script for the 'amsokol/golang-openshift:1.8.x-x' image.
 # The 'assemble' script builds your application source so that it is ready to run.
 #
 # For more information refer to the documentation:
@@ -54,9 +54,30 @@ if [ -f "./Gopkg.toml" ]
 then
 	echo "---> Using golang dep manager (dep is a prototype dependency management tool)"
 	echo "---> Downloading golang dep manager from github.com/golang/dep ..."
-	go get -u github.com/golang/dep/...
-	echo "---> Downloading dependencies..."
+	go get -u github.com/golang/dep/cmd/dep
+	echo "---> Downloading dependencies (running 'dep ensure') ..."
 	dep ensure
+elif [ -f "./Godeps/Godeps.json" ]
+then
+	echo "---> Using godep manager"
+	echo "---> Downloading godep manager from github.com/tools/godep ..."
+	go get -u github.com/tools/godep
+	echo "---> Downloading dependencies (running 'godep restore') ..."
+	godep restore
+elif [ -f "./glide.yaml" ]
+then
+	echo "---> Using glide manager"
+	echo "---> Downloading glide manager from github.com/Masterminds/glide ..."
+	go get -u github.com/Masterminds/glide
+	echo "---> Downloading dependencies (running 'glide install') ..."
+	glide install
+elif [ -f "./vendor/vendor.json" ]
+then
+	echo "---> Using govendor manager"
+	echo "---> Downloading govendor manager from github.com/kardianos/govendor ..."
+	go get -u github.com/kardianos/govendor
+	echo "---> Downloading dependencies (running 'govendor sync') ..."
+	govendor sync
 else
 	echo "---> Do not use dependency manager - run 'go get'"
 	echo "---> Downloading dependencies..."
