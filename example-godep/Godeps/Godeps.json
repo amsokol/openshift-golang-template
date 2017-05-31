@@ -1,5 +1,5 @@
 {
-	"ImportPath": "github.com/amsokol/openshift-golang-template/example-golang-godep",
+	"ImportPath": "github.com/amsokol/openshift-golang-template/example-godep",
 	"GoVersion": "go1.8",
 	"GodepVersion": "v79",
 	"Packages": [

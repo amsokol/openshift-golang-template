@@ -1,4 +1,4 @@
-package: github.com/amsokol/openshift-golang-template/example-golang-glide
+package: github.com/amsokol/openshift-golang-template/example-glide
 import:
 - package: github.com/pressly/chi
   version: ^2.1.0
