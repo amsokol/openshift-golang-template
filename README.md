@@ -7,7 +7,7 @@ It supports:
 | Data                                 | Value                                                    |
 |--------------------------------------|----------------------------------------------------------|
 | Go                                   | Go v1.8.1                                                |
-| OpenShift                            | OpenShift Origin v1.5.0                                  |
+| OpenShift                            | OpenShift Origin v1.5                                    |
 | Git repository                       | https://github.com/amsokol/openshift-golang-template.git |
 | Context directory                    | /example-golang-dep                                      |
 | Folder with main.go to build and run | /example-golang-dep/cmd/server                           |
