@@ -55,7 +55,8 @@ It supports:
 
 ```
 GOPROJECT_ROOT tells builder the root package of go project
-GOPROJECT_CMD tells builder the where "main()" function of "main" package to build and run is located (relative to GOPROJECT_ROOT)
+GOPROJECT_CMD tells builder the where "main()" function of "main" package to build and run is located (relative to GOPROJECT_ROOT).
+Note: ignore GOPROJECT_CMD if "main()" function of "main" package is located in GOPROJECT_ROOT folder. 
 
 In example above "main()" function of "main" package is located in `github.com/amsokol/openshift-golang-template/example-golang-dep/cmd/server`.
 GOPROJECT_ROOT is set to `github.com/amsokol/openshift-golang-template/example-golang-dep`.
