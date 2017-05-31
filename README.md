@@ -1,12 +1,15 @@
 # Golang template for OpenShift v3 (version 1.4 and higher)
 It supports:
 - Golang [dep manager](https://github.com/golang/dep) (dep is a prototype dependency management tool) - [/example-golang-dep](https://github.com/amsokol/openshift-golang-template/tree/master/example-golang-dep)
+- [glide](https://github.com/Masterminds/glide) manager - [/example-glide](https://github.com/amsokol/openshift-golang-template/tree/golang-1.8.1/example-glide)
+- [godep](https://github.com/tools/godep) manager - [/example-godep](https://github.com/amsokol/openshift-golang-template/tree/golang-1.8.1/example-godep)
+- [govendor](https://github.com/kardianos/govendor) manager - [/example-govendor](https://github.com/amsokol/openshift-golang-template/tree/golang-1.8.1/example-govendor)
 - Traditional `go get` - [/example](https://github.com/amsokol/openshift-golang-template/tree/master/example)
 
 ## Sample data to try golang template:
 | Data                                 | Value                                                    |
 |--------------------------------------|----------------------------------------------------------|
-| Go                                   | Go v1.8.1                                                |
+| Go                                   | Go v1.8                                                  |
 | OpenShift                            | OpenShift Origin v1.5                                    |
 | Git repository                       | https://github.com/amsokol/openshift-golang-template.git |
 | Context directory                    | /example-golang-dep                                      |
