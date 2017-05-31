@@ -3,8 +3,8 @@ package main
 import (
 	"os"
 
-	"github.com/amsokol/openshift-golang-template/example-golang-govendor/pkg/cmd/cli"
-	"github.com/amsokol/openshift-golang-template/example-golang-govendor/pkg/cmd/server"
+	"github.com/amsokol/openshift-golang-template/example-govendor/pkg/cmd/cli"
+	"github.com/amsokol/openshift-golang-template/example-govendor/pkg/cmd/server"
 )
 
 func main() {
