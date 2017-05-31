@@ -26,3 +26,5 @@ _testmain.go
 /example-golang-dep/vendor
 /example-golang-dep/Gopkg.lock
 /example-golang-godep/vendor
+/example-golang-glide/vendor
+/example-golang-glide/glide.lock
