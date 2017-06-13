@@ -86,4 +86,18 @@ fi
 
 echo "---> Building application from source"
 cd ./$GOPROJECT_CMD
-go build -o $GOPATH/bin/goapplication4run
+go build -o $GOPATH/bin/goapplication2run $GO_BUILD_ARGS
+
+echo "---> Deploy configuration files (if existed)"
+cd $GOPATH/bin
+while read GOPROJECT_CMD_CONFIG
+do
+	if [[ $GOPROJECT_CMD_CONFIG =~ .+:// ]]
+	then
+		echo "---> Downloading \"$GOPROJECT_CMD_CONFIG\" to \"$GOPATH/bin/\""
+		curl -O $GOPROJECT_CMD_CONFIG
+	else
+		echo "---> Coping \"$SOURCE_CODE/$GOPROJECT_CMD_CONFIG\" to \"$GOPATH/bin/\""
+		cp -f $SOURCE_CODE/$GOPROJECT_CMD_CONFIG ./
+	fi
+done < <((env | grep '^GOPROJECT_CMD_CONFIG[0-9]*=') | sed  's/^.*=\(.*\)$/\1/')
