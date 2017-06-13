@@ -101,10 +101,10 @@ Notes:
 - As you see above you can provide not URL only but other `curl` arguments like credentials. It very important to pass arguments after URL:
 ```
 Correct:
-GOPROJECT_CMD_CONFIG=smb://config.server.com/messaging/broker.json -u
+GOPROJECT_CMD_CONFIG=smb://config.server.com/messaging/broker.json -u "domain\username:passwd"
 
 Wrong:
-GOPROJECT_CMD_CONFIG=-u smb://config.server.com/messaging/broker.json
+GOPROJECT_CMD_CONFIG=-u "domain\username:passwd" smb://config.server.com/messaging/broker.json
 ```
 
 17. Leave other options with default values and click `Create` and wait while pod is created
