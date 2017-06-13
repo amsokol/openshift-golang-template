@@ -98,7 +98,7 @@ GOPROJECT_CMD_CONFIG2=smb://config.server.com/messaging/broker.json -u "domain\u
 ```
 Notes:
 - If you have only one configuration file use `GOPROJECT_CMD_CONFIG` environment variable. If you have more that one configuration files use `GOPROJECT_CMD_CONFIG1`, `GOPROJECT_CMD_CONFIG2`, `GOPROJECT_CMD_CONFIG3`, etc. environment variables.
-- As you see above you can provide not URL only other `curl` arguments like credentials. It very important to pass arguments after URL:
+- As you see above you can provide not URL only but other `curl` arguments like credentials. It very important to pass arguments after URL:
 ```
 Correct:
 GOPROJECT_CMD_CONFIG=smb://config.server.com/messaging/broker.json -u
