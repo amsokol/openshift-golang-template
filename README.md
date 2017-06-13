@@ -78,7 +78,38 @@ Note: please DO NOT override output file name ("-o" argument)!
 GOPROJECT_CMD_ARGS=--silent --force
 ```
 
-16. Leave other options with default values and click `Create` and wait while pod is created
+16. [Optional] You can easy provide configuration files to your binary that are copied by the build script to `GOPATH\bin` (where your binary file is located). Just add `GOPROJECT_CMD_CONFIG`, `GOPROJECT_CMD_CONFIG1`, `GOPROJECT_CMD_CONFIG2`, `GOPROJECT_CMD_CONFIG3`, etc. environment variables to `Build Configuration` or/and `Runtime Configuration` section. If your configuration files are located in the same project source control repository `GOPROJECT_CMD_CONFIGx` values should be `GOPROJECT_ROOT` related path. But you need to know that store configuration files into project repository is BAD PRACTICES (configuration files usually stores credentials, IPs, etc.). It's much more better to inject configuration file from outside (e.g. download from CI server). In this case set `GOPROJECT_CMD_CONFIGx` by URL value. Build scripts runs `curl` utility to download configuration files. It supports:
+`DICT, FILE, FTP, FTPS, Gopher, HTTP, HTTPS, IMAP, IMAPS, LDAP, LDAPS, POP3, POP3S, RTMP, RTSP, SCP, SFTP, SMB, SMBS, SMTP, SMTPS, Telnet, TFTP, SSL certificates, proxies, HTTP/2, cookies, user+password authentication (Basic, Plain, Digest, CRAM-MD5, NTLM, Negotiate and Kerberos) and more.`
+Here are some examples:
+```
+Provide configuration file is stored into the same source code repository (not recommended for production):
+GOPROJECT_CMD_CONFIG=config/settings.yaml
+
+Provide configuration files are stored into the same source code repository (not recommended for production):
+GOPROJECT_CMD_CONFIG1=config/db/db.yaml
+GOPROJECT_CMD_CONFIG2=config/messaging/broker.json
+
+Download configuration file via HTTPS:
+GOPROJECT_CMD_CONFIG=https://config.server.com/myapp/settings.yaml
+
+Download configuration files via HTTPS:
+GOPROJECT_CMD_CONFIG1=https://config.server.com/myapp/db/db.yaml
+GOPROJECT_CMD_CONFIG2=smb://config.server.com/messaging/broker.json -u "domain\username:passwd"
+
+```
+Notes:
+- You can provide configuration files for both `Build Configuration` and `Runtime Configuration`. Its recommended to inject configuration files during build - it saves application startup time. Use `Runtime Configuration` if your configuration files are generated every time your application is started (not recommended for production).
+- If you have only one configuration file use `GOPROJECT_CMD_CONFIG` environment variable. If you have more that one configuration files use `GOPROJECT_CMD_CONFIG1`, `GOPROJECT_CMD_CONFIG2`, `GOPROJECT_CMD_CONFIG3`, etc. environment variables.
+- As you see above you can provide not URL only other `curl` arguments like credentials. It very important to pass arguments after URL:
+```
+Correct:
+GOPROJECT_CMD_CONFIG=smb://config.server.com/messaging/broker.json -u
+
+Wrong:
+GOPROJECT_CMD_CONFIG=-u smb://config.server.com/messaging/broker.json
+```
+
+17. Leave other options with default values and click `Create` and wait while pod is created
 
 ## [Optional] How to add health (liveness and readiness) checks
 1. Login to OpenShift console using browser (eg https://openshift.example.com:8443) with Developer account
