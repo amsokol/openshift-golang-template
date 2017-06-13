@@ -73,7 +73,12 @@ GO_BUILD_ARGS=-x -v
 Note: please DO NOT override output file name ("-o" argument)!
 ```
 
-15. Leave other options with default values and click `Create` and wait while pod is created
+15. [Optional] You can easy provide command line arguments to your binary. Just add `GOPROJECT_CMD_ARGS` environment variable to `Runtime Configuration` section. For example the following value provides `--silent` and `--force` arguments the binary:
+```
+GOPROJECT_CMD_ARGS=--silent --force
+```
+
+16. Leave other options with default values and click `Create` and wait while pod is created
 
 ## [Optional] How to add health (liveness and readiness) checks
 1. Login to OpenShift console using browser (eg https://openshift.example.com:8443) with Developer account
