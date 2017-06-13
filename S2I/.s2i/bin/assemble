@@ -101,6 +101,3 @@ do
 		cp -f $SOURCE_CODE/$GOPROJECT_CMD_CONFIG ./
 	fi
 done < <((env | grep '^GOPROJECT_CMD_CONFIG[0-9]*=') | sed  's/^.*=\(.*\)$/\1/')
-
-# for DEBUG inly
-ls
