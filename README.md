@@ -95,7 +95,6 @@ GOPROJECT_CMD_CONFIG=https://config.server.com/myapp/settings.yaml
 Download configuration files via HTTPS:
 GOPROJECT_CMD_CONFIG1=https://config.server.com/myapp/db/db.yaml
 GOPROJECT_CMD_CONFIG2=smb://config.server.com/messaging/broker.json -u "domain\username:passwd"
-
 ```
 Notes:
 - If you have only one configuration file use `GOPROJECT_CMD_CONFIG` environment variable. If you have more that one configuration files use `GOPROJECT_CMD_CONFIG1`, `GOPROJECT_CMD_CONFIG2`, `GOPROJECT_CMD_CONFIG3`, etc. environment variables.
