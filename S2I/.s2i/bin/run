@@ -9,27 +9,5 @@
 
 cd $GOPATH/bin
 
-echo "---> Deploy configuration files (if existed)"
-while read GOPROJECT_CMD_CONFIG
-do
-	if [[ $GOPROJECT_CMD_CONFIG =~ .+:// ]]
-	then
-		echo "---> Downloading \"$GOPROJECT_CMD_CONFIG\" to \"$GOPATH/bin/\""
-		curl -O $GOPROJECT_CMD_CONFIG
-	else
-		echo "---> Coping \"$GOPROJECT_CMD_CONFIG\" to \"$GOPATH/bin/\""
-        if test -d /tmp/src
-        then
-    		cp -f /tmp/src/$GOPROJECT_CMD_CONFIG ./
-        else
-            # for backwards compatibility
-            cp -f /tmp/s2i*/upload/src/$GOPROJECT_CMD_CONFIG ./
-        fi
-	fi
-done < <((env | grep '^GOPROJECT_CMD_CONFIG[0-9]*=') | sed  's/^.*=\(.*\)$/\1/')
-
-# for DEBUG inly
-ls
-
 echo "---> Run apllication"
 exec ./goapplication2run $GOPROJECT_CMD_ARGS
