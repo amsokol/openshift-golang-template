@@ -69,6 +69,8 @@ So GOPROJECT_CMD is set to `cmd/server`
 14. [Optional] You can easy provide `go build` arguments. Just add `GO_BUILD_ARGS` environment variable to `Build Configuration` section. For example the following value tells `go build` to print the commands are run and packages are compiled:
 ```
 GO_BUILD_ARGS=-x -v
+
+Note: please DO NOT override output file name ("-o" argument)!
 ```
 
 15. Leave other options with default values and click `Create` and wait while pod is created
