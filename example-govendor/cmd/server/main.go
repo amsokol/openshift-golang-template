@@ -8,6 +8,7 @@ import (
 )
 
 func main() {
+	cli.EchoArgs()
 	if err := server.Start(cli.GetPort()); err != nil {
 		os.Exit(1)
 	}

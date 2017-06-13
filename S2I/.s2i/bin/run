@@ -7,4 +7,7 @@
 #	https://github.com/openshift/source-to-image/blob/master/docs/builder_image.md
 #
 
-exec $GOPATH/bin/goapplication4run
+cd $GOPATH/bin
+
+echo "---> Run apllication"
+exec ./goapplication2run $GOPROJECT_CMD_ARGS
