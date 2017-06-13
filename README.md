@@ -1,15 +1,9 @@
 # Golang template for OpenShift v3 (version 1.4 and higher)
 It supports:
 - Golang [dep manager](https://github.com/golang/dep) (dep is a prototype dependency management tool) - [/example-golang-dep](https://github.com/amsokol/openshift-golang-template/tree/master/example-golang-dep)
-<<<<<<< HEAD
 - [glide](https://github.com/Masterminds/glide) manager - [/example-glide](https://github.com/amsokol/openshift-golang-template/tree/master/example-glide)
 - [godep](https://github.com/tools/godep) manager - [/example-godep](https://github.com/amsokol/openshift-golang-template/tree/master/example-godep)
 - [govendor](https://github.com/kardianos/govendor) manager - [/example-govendor](https://github.com/amsokol/openshift-golang-template/tree/master/example-govendor)
-=======
-- [glide](https://github.com/Masterminds/glide) manager - [/example-glide](https://github.com/amsokol/openshift-golang-template/tree/golang-1.8.2/example-glide)
-- [godep](https://github.com/tools/godep) manager - [/example-godep](https://github.com/amsokol/openshift-golang-template/tree/golang-1.8.2/example-godep)
-- [govendor](https://github.com/kardianos/govendor) manager - [/example-govendor](https://github.com/amsokol/openshift-golang-template/tree/golang-1.8.2/example-govendor)
->>>>>>> golang-1.8.2
 - Traditional `go get` - [/example](https://github.com/amsokol/openshift-golang-template/tree/master/example)
 
 ## Sample data to try golang template:
