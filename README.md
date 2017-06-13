@@ -59,14 +59,19 @@ It supports:
 ```
 GOPROJECT_ROOT tells builder the root package of go project
 GOPROJECT_CMD tells builder the where "main()" function of "main" package to build and run is located (relative to GOPROJECT_ROOT).
-Note: ignore GOPROJECT_CMD if "main()" function of "main" package is located in GOPROJECT_ROOT folder. 
+Note: ignore GOPROJECT_CMD if "main()" function of "main" package is located in GOPROJECT_ROOT folder.
 
 In example above "main()" function of "main" package is located in `github.com/amsokol/openshift-golang-template/example-golang-dep/cmd/server`.
 GOPROJECT_ROOT is set to `github.com/amsokol/openshift-golang-template/example-golang-dep`.
 So GOPROJECT_CMD is set to `cmd/server`
 ```
 
-14. Leave other options with default values and click `Create` and wait while pod is created
+14. [Optional] You can easy provide `go build` arguments. Just add `GO_BUILD_ARGS` environment variable to `Build Configuration` section. For example the following value tells `go build` to print the commands are run and packages are compiled:
+```
+GO_BUILD_ARGS=-x -v
+```
+
+15. Leave other options with default values and click `Create` and wait while pod is created
 
 ## [Optional] How to add health (liveness and readiness) checks
 1. Login to OpenShift console using browser (eg https://openshift.example.com:8443) with Developer account

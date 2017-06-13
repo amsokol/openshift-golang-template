@@ -86,4 +86,4 @@ fi
 
 echo "---> Building application from source"
 cd ./$GOPROJECT_CMD
-go build -o $GOPATH/bin/goapplication4run
+go build -o $GOPATH/bin/goapplication4run $GO_BUILD_ARGS
