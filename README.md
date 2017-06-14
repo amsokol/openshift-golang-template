@@ -1,4 +1,4 @@
-# Golang template for OpenShift v3 (version 1.4 and higher)
+# Template for running Go programs on OpenShift v3 (version 1.4 and higher)
 It supports:
 - Golang [dep manager](https://github.com/golang/dep) (dep is a prototype dependency management tool) - [/example-golang-dep](https://github.com/amsokol/openshift-golang-template/tree/master/example-golang-dep)
 - [glide](https://github.com/Masterminds/glide) manager - [/example-glide](https://github.com/amsokol/openshift-golang-template/tree/master/example-glide)
