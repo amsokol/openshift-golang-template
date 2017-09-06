@@ -1,54 +1,62 @@
 # Template for running Go programs on OpenShift v3 (version 1.4 and higher)
+
 It supports:
+
 - Golang [dep manager](https://github.com/golang/dep) (dep is a prototype dependency management tool) - [/example-golang-dep](https://github.com/amsokol/openshift-golang-template/tree/master/example-golang-dep)
 - [glide](https://github.com/Masterminds/glide) manager - [/example-glide](https://github.com/amsokol/openshift-golang-template/tree/master/example-glide)
 - [godep](https://github.com/tools/godep) manager - [/example-godep](https://github.com/amsokol/openshift-golang-template/tree/master/example-godep)
 - [govendor](https://github.com/kardianos/govendor) manager - [/example-govendor](https://github.com/amsokol/openshift-golang-template/tree/master/example-govendor)
 - Traditional `go get` - [/example](https://github.com/amsokol/openshift-golang-template/tree/master/example)
 
-## Sample data to try golang template:
+## Sample data to try golang template
+
 | Data                                 | Value                                                    |
 |--------------------------------------|----------------------------------------------------------|
-| Go                                   | Go v1.8                                                  |
+| Go                                   | Go v1.9                                                  |
 | OpenShift                            | OpenShift Origin v1.5                                    |
 | Git repository                       | https://github.com/amsokol/openshift-golang-template.git |
 | Context directory                    | /example-golang-dep                                      |
 | Folder with main.go to build and run | /example-golang-dep/cmd/server                           |
 
-## How to:
+## How to
+
 1. Login with Developer account to OpenShift:
-```
+
+```bash
 # oc login --insecure-skip-tls-verify -u <username> https://openshift.example.com:8443
 ```
 
 2. Create new project:
-```
+
+```bash
 # oc new-project project1
 ```
 
 3. Select `project1` project:
-```
+
+```bash
 # oc project project1
 ```
 
 4. Create ImageStream:
-```
+
+```bash
 # oc create -f ./openshift-golang-template.yaml
 ```
 
-5. Login to OpenShift console using browser (eg https://openshift.example.com:8443) with Developer account
+5. Login to OpenShift console using browser (e.g. [https://openshift.example.com:8443](https://openshift.example.com:8443)) with Developer account
 
 6. Open `project1` project
 
 7. Click `Add to Project` and select `Go`
 
-8. Select `1.8.3 - latest` from drop down list and click `Select`
+8. Select `1.9.0 - latest` from drop down list and click `Select`
 
 9. Set `Name` to `golang1`
 
 10. Set `Git Repository URL` to `https://github.com/amsokol/openshift-golang-template.git` or click `Try It`
 
-11. Click `advanced options` to add additional configuration params
+11. Click `advanced options` to add additional configuration parameters
 
 12. Set `Context Dir` to `/example-golang-dep` (sample project with [dep manager](https://github.com/golang/dep) support)
 
@@ -56,7 +64,7 @@ It supports:
 - GOPROJECT_ROOT=github.com/amsokol/openshift-golang-template/example-golang-dep
 - GOPROJECT_CMD=cmd/server
 
-```
+```bash
 GOPROJECT_ROOT tells builder the root package of go project
 GOPROJECT_CMD tells builder the where "main()" function of "main" package to build and run is located (relative to GOPROJECT_ROOT).
 Note: ignore GOPROJECT_CMD if "main()" function of "main" package is located in GOPROJECT_ROOT folder.
@@ -67,21 +75,25 @@ So GOPROJECT_CMD is set to `cmd/server`
 ```
 
 14. [Optional] You can easy provide `go build` arguments. Just add `GO_BUILD_ARGS` environment variable to `Build Configuration` section. For example the following value tells `go build` to print the commands are run and packages are compiled:
-```
+
+```bash
 GO_BUILD_ARGS=-x -v
 
 Note: please DO NOT override output file name ("-o" argument)!
 ```
 
 15. [Optional] You can easy provide command line arguments to your binary. Just add `GOPROJECT_CMD_ARGS` environment variable to `Deployment Configuration` section. For example the following value provides `--silent` and `--force` arguments the binary:
-```
+
+```bash
 GOPROJECT_CMD_ARGS=--silent --force
 ```
 
 16. [Optional] You can easy provide configuration files to your binary that are copied by the build script to `GOPATH\bin` (where your binary file is located). Just add `GOPROJECT_CMD_CONFIG`, `GOPROJECT_CMD_CONFIG1`, `GOPROJECT_CMD_CONFIG2`, `GOPROJECT_CMD_CONFIG3`, etc. environment variables to `Build Configuration` section. If your configuration files are located in the same project source control repository `GOPROJECT_CMD_CONFIGx` values should be `GOPROJECT_ROOT` related path. But you need to know that store configuration files into project repository is BAD PRACTICES (configuration files usually contain credentials, IPs, etc.). It's much more better to inject configuration file from outside (e.g. download from CI server). In this case set `GOPROJECT_CMD_CONFIGx` by URL value. Build scripts runs `curl` utility to download configuration files. It supports:
+
 `DICT, FILE, FTP, FTPS, Gopher, HTTP, HTTPS, IMAP, IMAPS, LDAP, LDAPS, POP3, POP3S, RTMP, RTSP, SCP, SFTP, SMB, SMBS, SMTP, SMTPS, Telnet, TFTP, SSL certificates, proxies, HTTP/2, cookies, user+password authentication (Basic, Plain, Digest, CRAM-MD5, NTLM, Negotiate and Kerberos) and more.`
 Here are some examples:
-```
+
+```bash
 Provide configuration file is stored into the same source code repository (not recommended for production):
 GOPROJECT_CMD_CONFIG=config/settings.yaml
 
@@ -96,10 +108,13 @@ Download configuration files via HTTPS:
 GOPROJECT_CMD_CONFIG1=https://config.server.com/myapp/db/db.yaml
 GOPROJECT_CMD_CONFIG2=smb://config.server.com/messaging/broker.json -u "domain\username:passwd"
 ```
+
 Notes:
+
 - If you have only one configuration file use `GOPROJECT_CMD_CONFIG` environment variable. If you have more that one configuration files use `GOPROJECT_CMD_CONFIG1`, `GOPROJECT_CMD_CONFIG2`, `GOPROJECT_CMD_CONFIG3`, etc. environment variables.
 - As you see above you can provide not URL only but other `curl` arguments like credentials. It very important to pass arguments after URL:
-```
+
+```bash
 Correct:
 GOPROJECT_CMD_CONFIG=smb://config.server.com/messaging/broker.json -u "domain\username:passwd"
 
@@ -110,38 +125,42 @@ GOPROJECT_CMD_CONFIG=-u "domain\username:passwd" smb://config.server.com/messagi
 17. Leave other options with default values and click `Create` and wait while pod is created
 
 ## [Optional] How to add health (liveness and readiness) checks
+
 1. Login to OpenShift console using browser (eg https://openshift.example.com:8443) with Developer account
 
-2. Open `project1` project
+1. Open `project1` project
 
-3. Click `Applications -> Deployments`
+1. Click `Applications -> Deployments`
 
-4. Click `golang1` in the list
+1. Click `golang1` in the list
 
-5. Select `Configuration` tab
+1. Select `Configuration` tab
 
-6. Click `Add Health Checks`
+1. Click `Add Health Checks`
 
-7. Click `Add Readiness Probe`
+1. Click `Add Readiness Probe`
 
-8. Set `Path` to '/healthz/ready' and leave other options with default values
+1. Set `Path` to '/healthz/ready' and leave other options with default values
 
-9. Click `Add Liveness Probe`
+1. Click `Add Liveness Probe`
 
-10. Set `Path` to '/healthz/live' and leave other options with default values
+1. Set `Path` to '/healthz/live' and leave other options with default values
 
-11. Click `Save` and wait while pod is created
+1. Click `Save` and wait while pod is created
 
 ## Helper #1 - you can try golang template using S2I:
-```
-s2i build https://github.com/amsokol/openshift-golang-template.git amsokol/golang-openshift:1.8.3-3 golang1 -e GOPROJECT_ROOT=github.com/amsokol/openshift-golang-template/example-golang-dep -e GOPROJECT_CMD=cmd/server --context-dir /example-golang-dep
+
+```bash
+s2i build https://github.com/amsokol/openshift-golang-template.git amsokol/golang-openshift:1.9.0-1 golang1 -e GOPROJECT_ROOT=github.com/amsokol/openshift-golang-template/example-golang-dep -e GOPROJECT_CMD=cmd/server --context-dir /example-golang-dep
 ```
 
-## Helper #2 - how to export/edit template from OpenShift:
+## Helper #2 - how to export/edit template from OpenShift
+
 1. Login using oc as OpenShift administrator
 
-2. Run:
-```
+1. Run:
+
+```bash
 # oc get templates -n openshift
 # oc edit template -n openshift nodejs-mongo-persistent
 ```
