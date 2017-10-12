@@ -1,5 +1,5 @@
 # amsokol/golang-openshift:1.9.1
-FROM openshift/base-centos7
+FROM centos/s2i-base-centos7
 
 # Maintainer name in the image metadata
 LABEL maintainer="github@amsokol.digital"
