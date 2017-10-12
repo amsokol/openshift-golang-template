@@ -1,21 +1,21 @@
-# amsokol/golang-openshift:1.9.0
+# amsokol/golang-openshift:1.9.1
 FROM openshift/base-centos7
 
 # Maintainer name in the image metadata
-MAINTAINER Alexander Sokolovsky <amsokol@gmail.com>
+LABEL maintainer="github@amsokol.digital"
 
 # Builder environment variable to inform users about application you provide them
 ENV GOLANG_OPENSHIFT_BUILDER_VERSION 1.0
 
 # Set labels used in OpenShift to describe the builder image
 LABEL io.k8s.description="Platform for building golang web application" \
-      io.k8s.display-name="builder 1.9.0" \
+      io.k8s.display-name="builder 1.9.1" \
       io.openshift.expose-services="8080:http" \
-      io.openshift.tags="builder,1.9.0,golang"
+      io.openshift.tags="builder,1.9.1,golang"
 
-ENV GOLANG_VERSION 1.9
+ENV GOLANG_VERSION 1.9.1
 ENV GOLANG_DOWNLOAD_URL https://golang.org/dl/go$GOLANG_VERSION.linux-amd64.tar.gz
-ENV GOLANG_DOWNLOAD_SHA256 d70eadefce8e160638a9a6db97f7192d8463069ab33138893ad3bf31b0650a79
+ENV GOLANG_DOWNLOAD_SHA256 07d81c6b6b4c2dcf1b5ef7c27aaebd3691cdb40548500941f92b221147c5d9c7
 RUN curl -fsSL "$GOLANG_DOWNLOAD_URL" -o golang.tar.gz \
     && echo "$GOLANG_DOWNLOAD_SHA256  golang.tar.gz" | sha256sum -c - \
 	&& tar -C /usr/local -xzf golang.tar.gz \

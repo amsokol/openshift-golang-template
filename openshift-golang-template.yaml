@@ -16,7 +16,7 @@ spec:
       sampleRepo: https://github.com/amsokol/openshift-golang-template.git
     from:
       kind: ImageStreamTag
-      name: '1.9.0'
+      name: '1.9.1'
   - name: '1.8.1'
     annotations:
       openshift.io/display-name: Golang 1.8.1
@@ -85,3 +85,20 @@ spec:
     from:
       kind: DockerImage
       name: docker.io/amsokol/golang-openshift:1.9.0-1
+  - name: '1.9.1'
+    annotations:
+      openshift.io/display-name: Golang 1.9.1
+      description: |
+        Build and run Go 1.9.1 applications on CentOS 7.
+
+        IMPORTANT: environment variables GOPROJECT_ROOT and GOPROJECT_CMD must be set by corresponding values in "Build Configuration" section, "Environment Variables (Build and Runtime)" list.
+        For example, git URL is "https://github.com/amsokol/openshift-golang-template.git", context directory is "/example-golang-dep" and "main()" function of "main" package is located in "/example-golang-dep/cmd/server".
+        In this case set GOPROJECT_ROOT=github.com/amsokol/openshift-golang-template/example-golang-dep and GOPROJECT_CMD=cmd/server
+      iconClass: icon-go-gopher
+      tags: builder,golang
+      supports: golang:1.9.1,golang
+      version: '1.9.1'
+      sampleRepo: https://github.com/amsokol/openshift-golang-template.git
+    from:
+      kind: DockerImage
+      name: docker.io/amsokol/golang-openshift:1.9.1-1
