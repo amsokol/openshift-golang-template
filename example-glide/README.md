@@ -25,7 +25,7 @@
 
 7. Click `Add to Project` and select `Go`
 
-8. Select `1.8.3 - latest` from drop down list and click `Select`
+8. Select `1.8.4 - latest` from drop down list and click `Select`
 
 9. Set `Name` to `golang1`
 
@@ -42,7 +42,7 @@
 ```
 GOPROJECT_ROOT tells builder the root package of go project
 GOPROJECT_CMD tells builder the where "main()" function of "main" package to build and run is located (relative to GOPROJECT_ROOT).
-Note: ignore GOPROJECT_CMD if "main()" function of "main" package is located in GOPROJECT_ROOT folder. 
+Note: ignore GOPROJECT_CMD if "main()" function of "main" package is located in GOPROJECT_ROOT folder.
 
 In example above "main()" function of "main" package is located in `github.com/amsokol/openshift-golang-template/example-glide/cmd/server`.
 GOPROJECT_ROOT is set to `github.com/amsokol/openshift-golang-template/example-glide`.
@@ -76,5 +76,5 @@ So GOPROJECT_CMD is set to `cmd/server`
 
 ## Helper #1 - you can try golang template using S2I:
 ```
-s2i build https://github.com/amsokol/openshift-golang-template.git amsokol/golang-openshift:1.8.3-2 golang1 -e GOPROJECT_ROOT=github.com/amsokol/openshift-golang-template/example-glide -e GOPROJECT_CMD=cmd/server --context-dir /example-glide
+s2i build https://github.com/amsokol/openshift-golang-template.git amsokol/golang-openshift:1.8.4-1 golang1 -e GOPROJECT_ROOT=github.com/amsokol/openshift-golang-template/example-glide -e GOPROJECT_CMD=cmd/server --context-dir /example-glide
 ```
