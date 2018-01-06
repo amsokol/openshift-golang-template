@@ -12,7 +12,7 @@ It supports:
 
 | Data                                 | Value                                                    |
 |--------------------------------------|----------------------------------------------------------|
-| Go                                   | Go v1.9.1                                                |
+| Go                                   | Go v1.9.2                                                |
 | OpenShift                            | OpenShift Origin v1.5                                    |
 | Git repository                       | https://github.com/amsokol/openshift-golang-template.git |
 | Context directory                    | /example-golang-dep                                      |
@@ -50,7 +50,7 @@ It supports:
 
 7. Click `Add to Project` and select `Go`
 
-8. Select `1.9.1 - latest` from drop down list and click `Select`
+8. Select `1.9.2 - latest` from drop down list and click `Select`
 
 9. Set `Name` to `golang1`
 
@@ -151,7 +151,7 @@ GOPROJECT_CMD_CONFIG=-u "domain\username:passwd" smb://config.server.com/messagi
 ## Helper #1 - you can try golang template using S2I:
 
 ```bash
-s2i build https://github.com/amsokol/openshift-golang-template.git amsokol/golang-openshift:1.9.1-1 golang1 -e GOPROJECT_ROOT=github.com/amsokol/openshift-golang-template/example-golang-dep -e GOPROJECT_CMD=cmd/server --context-dir /example-golang-dep
+s2i build https://github.com/amsokol/openshift-golang-template.git amsokol/golang-openshift:1.9.2-1 golang1 -e GOPROJECT_ROOT=github.com/amsokol/openshift-golang-template/example-golang-dep -e GOPROJECT_CMD=cmd/server --context-dir /example-golang-dep
 ```
 
 ## Helper #2 - how to export/edit template from OpenShift
