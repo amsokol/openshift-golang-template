@@ -25,7 +25,7 @@
 
 7. Click `Add to Project` and select `Go`
 
-8. Select `1.8.4 - latest` from drop down list and click `Select`
+8. Select `1.8.5 - latest` from drop down list and click `Select`
 
 9. Set `Name` to `golang1`
 
@@ -76,5 +76,5 @@ So GOPROJECT_CMD is set to `cmd/server`
 
 ## Helper #1 - you can try golang template using S2I:
 ```
-s2i build https://github.com/amsokol/openshift-golang-template.git amsokol/golang-openshift:1.8.4-1 golang1 -e GOPROJECT_ROOT=github.com/amsokol/openshift-golang-template/example -e GOPROJECT_CMD=cmd/server --context-dir /example
+s2i build https://github.com/amsokol/openshift-golang-template.git amsokol/golang-openshift:1.8.5-1 golang1 -e GOPROJECT_ROOT=github.com/amsokol/openshift-golang-template/example -e GOPROJECT_CMD=cmd/server --context-dir /example
 ```
